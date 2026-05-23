@@ -130,18 +130,22 @@
     <div class="modal-body">
       <div class="settings-section">
         <div class="ss-title">APP PATHS</div>
-        <div class="ss-help">If you've deployed each app at a custom URL (e.g. GitHub Pages), paste them here. Leave blank to use the relative defaults.</div>
+        <div class="ss-help">
+          Leave blank to use the auto-defaults (recommended).<br>
+          <strong>⚠ Don't paste <code>github.com</code> URLs</strong> — those are source-code views, not deployed sites.
+          The right URL looks like <code>https://USER.github.io/REPO/app-name/</code>.
+        </div>
         <div class="form-field">
           <label class="ff-label">🏖 BEACH DAY URL</label>
-          <input type="text" id="path-beachDay" placeholder="../big backs beach day/" class="ff-input" />
+          <input type="text" id="path-beachDay" placeholder="../beach-day/  or  https://you.github.io/repo/beach-day/" class="ff-input" />
         </div>
         <div class="form-field">
           <label class="ff-label">🏁 RACES URL</label>
-          <input type="text" id="path-races" placeholder="../Big Backs Races/" class="ff-input" />
+          <input type="text" id="path-races" placeholder="../races/  or  https://you.github.io/repo/races/" class="ff-input" />
         </div>
         <div class="form-field">
           <label class="ff-label">🎵 JAM URL</label>
-          <input type="text" id="path-jam" placeholder="../Big Backs Jam/" class="ff-input" />
+          <input type="text" id="path-jam" placeholder="../jam/  or  https://you.github.io/repo/jam/" class="ff-input" />
         </div>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
           <button id="btn-save-paths" class="btn-primary">Save paths</button>

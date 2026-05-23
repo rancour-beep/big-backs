@@ -404,48 +404,80 @@ function wireInstallPrompt() {
   window.addEventListener('appinstalled', () => { btn.hidden = true; deferredPrompt = null; });
 }
 
-// Stricter path validation — only accept clean relative sibling paths
+// Stricter path validation — accept clean relative paths OR absolute https URLs
+// (but NOT github.com source-view URLs, which are not deployed sites)
 function isValidPath(p) {
-  return typeof p === 'string' &&
-    /^\.\.\/[a-z][a-z0-9-]*\/?$/i.test(p);
+  if (typeof p !== 'string' || !p) return false;
+  // Relative sibling path
+  if (/^\.\.\/[a-z][a-z0-9-]*\/?$/i.test(p)) return true;
+  // Absolute URL — must be https + not github.com (which is source view)
+  try {
+    const u = new URL(p);
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
+    if (u.hostname === 'github.com' || u.hostname === 'www.github.com') return false;
+    return true;
+  } catch { return false; }
+}
+
+// Auto-migrate accidentally-saved GitHub source-view URLs to the deployed
+// github.io equivalent. e.g.
+//   github.com/rancour-beep/big-backs/tree/main/beach-day
+// → https://rancour-beep.github.io/big-backs/beach-day/
+function migrateGithubUrl(p) {
+  if (typeof p !== 'string') return null;
+  const m = /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/]+)\/(?:tree|blob)\/[^/]+\/(.+?)\/?$/i.exec(p);
+  if (!m) return null;
+  const [, user, repo, subPath] = m;
+  return `https://${user}.github.io/${repo}/${subPath.replace(/^\/+|\/+$/g, '')}/`;
 }
 
 function getUserPath(key, defaultPath) {
   try {
     const paths  = JSON.parse(localStorage.getItem('bigbacks_paths_v1') || '{}');
-    const stored = paths[key];
-    // In production: aggressively reject anything that isn't a clean kebab-case
-    // sibling path. Wipes stale local-dev paths, percent-encoded chars, localhost
-    // URLs, anything weird.
+    let stored = paths[key];
+
+    // Auto-migrate github.com source-view URLs → github.io deployed URLs
+    const migrated = migrateGithubUrl(stored);
+    if (migrated) {
+      paths[key] = migrated;
+      stored = migrated;
+      localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
+      console.warn('[BigBacks Hub] auto-migrated github.com URL for', key, '→', migrated);
+    }
+
+    // If still invalid in production, wipe it
     if (stored && IS_DEPLOYED && !isValidPath(stored)) {
       delete paths[key];
       localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
-      console.warn('[BigBacks Hub] cleared stale path for', key, '→ was:', stored);
+      console.warn('[BigBacks Hub] cleared invalid path for', key, '→ was:', stored);
       return defaultPath;
     }
-    if (stored && !isValidPath(stored)) {
-      // In dev, just ignore but don't wipe
-      return defaultPath;
-    }
+    if (stored && !isValidPath(stored)) return defaultPath;
     return stored || defaultPath;
   } catch { return defaultPath; }
 }
 
-// Run once on boot: scrub localStorage paths in production
+// Run once on boot: migrate + scrub localStorage paths
 (function scrubPathsOnBoot() {
-  if (!IS_DEPLOYED) return;
   try {
     const raw = localStorage.getItem('bigbacks_paths_v1');
     if (!raw) return;
     const paths = JSON.parse(raw);
     let changed = false;
     Object.keys(paths).forEach(k => {
-      if (!isValidPath(paths[k])) { delete paths[k]; changed = true; }
+      const v = paths[k];
+      const migrated = migrateGithubUrl(v);
+      if (migrated) {
+        paths[k] = migrated;
+        changed = true;
+        console.warn('[BigBacks Hub] boot-migrated github.com URL for', k, '→', migrated);
+      } else if (IS_DEPLOYED && !isValidPath(v)) {
+        delete paths[k];
+        changed = true;
+        console.warn('[BigBacks Hub] boot-scrubbed invalid path for', k, '→ was:', v);
+      }
     });
-    if (changed) {
-      localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
-      console.warn('[BigBacks Hub] scrubbed stale path overrides on boot');
-    }
+    if (changed) localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
   } catch {}
 })();
 
