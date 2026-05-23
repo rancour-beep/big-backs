@@ -41,8 +41,32 @@ new Lobby(null, startLoading, (char) => {
 });
 buildOnlineUI();
 
-document.getElementById('garage-back-btn').addEventListener('click', closeGarage);
+// ← LOBBY button (garage header) — goes back to lobby (saves garage settings)
 document.getElementById('lobby-back-btn').addEventListener('click', closeGarage);
+// 🏁 RACE! button (garage header) — save garage settings + start the race directly
+document.getElementById('garage-back-btn').addEventListener('click', () => {
+  if (!selectedChar) { closeGarage(); return; }
+  if (garage) {
+    garageSettings = garage.getSettings();
+    garage.unmount();
+    garage = null;
+  }
+  startLoading(selectedChar);
+});
+// ← LOBBY button (in-game) — exit the race back to the lobby
+document.getElementById('exit-race-btn').addEventListener('click', exitRace);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && (state === S.COUNTDOWN || state === S.RACING || state === S.FINISHED)) {
+    exitRace();
+  }
+});
+
+function exitRace() {
+  if (!confirm('Exit the race? You\'ll lose your progress.')) return;
+  // Brute-force clean reload — guarantees no orphaned WebGL contexts, audio, or timers
+  // (without resetting localStorage, so profile + garage + activity are preserved)
+  location.reload();
+}
 
 // ─── Audio unlock ────────────────────────────────────────────────────────
 ['click','touchstart','keydown'].forEach(e =>
@@ -217,6 +241,7 @@ async function startLoading(char) {
 
   switchScreen('game');
   hud.show();
+  document.getElementById('exit-race-btn').style.display = 'block';
   maybeShowTouchControls();
 
   state    = S.COUNTDOWN;

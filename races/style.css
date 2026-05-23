@@ -276,3 +276,28 @@ kbd{display:inline-block;padding:0.08em 0.35em;background:rgba(255,255,255,0.09)
   .gt-races{font-size:1.25rem}
   .garage-ui{max-height:50vh;overflow-y:auto}
 }
+
+/* ─── In-game EXIT RACE button ───────────────────────────────────────────── */
+.exit-race-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 31;
+  background: rgba(0,0,0,0.55);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-family: 'Rajdhani', 'Manrope', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.15s;
+  backdrop-filter: blur(4px);
+}
+.exit-race-btn:hover {
+  background: rgba(255,69,0,0.7);
+  border-color: #FF8C00;
+  transform: translateX(-2px);
+}
