@@ -334,6 +334,18 @@ function wireSettings() {
     renderProfile();
   });
 
+  // Hard-reset all path overrides
+  const resetPathsBtn = $('btn-reset-paths');
+  if (resetPathsBtn) {
+    resetPathsBtn.addEventListener('click', () => {
+      localStorage.removeItem('bigbacks_paths_v1');
+      // Also blank the inputs
+      APPS.forEach(app => { const inp = $('path-' + app.key); if (inp) inp.value = ''; });
+      renderApps();
+      toast('Paths reset to defaults ♡', 'success');
+    });
+  }
+
   // Custom paths
   const stored = JSON.parse(localStorage.getItem('bigbacks_paths_v1') || '{}');
   APPS.forEach(app => {
@@ -392,19 +404,50 @@ function wireInstallPrompt() {
   window.addEventListener('appinstalled', () => { btn.hidden = true; deferredPrompt = null; });
 }
 
+// Stricter path validation — only accept clean relative sibling paths
+function isValidPath(p) {
+  return typeof p === 'string' &&
+    /^\.\.\/[a-z][a-z0-9-]*\/?$/i.test(p);
+}
+
 function getUserPath(key, defaultPath) {
   try {
     const paths  = JSON.parse(localStorage.getItem('bigbacks_paths_v1') || '{}');
     const stored = paths[key];
-    // When deployed, ignore stale local-dev paths (folder names with spaces)
-    if (stored && IS_DEPLOYED && (stored.includes(' ') || stored.includes('%20'))) {
+    // In production: aggressively reject anything that isn't a clean kebab-case
+    // sibling path. Wipes stale local-dev paths, percent-encoded chars, localhost
+    // URLs, anything weird.
+    if (stored && IS_DEPLOYED && !isValidPath(stored)) {
       delete paths[key];
       localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
+      console.warn('[BigBacks Hub] cleared stale path for', key, '→ was:', stored);
+      return defaultPath;
+    }
+    if (stored && !isValidPath(stored)) {
+      // In dev, just ignore but don't wipe
       return defaultPath;
     }
     return stored || defaultPath;
   } catch { return defaultPath; }
 }
+
+// Run once on boot: scrub localStorage paths in production
+(function scrubPathsOnBoot() {
+  if (!IS_DEPLOYED) return;
+  try {
+    const raw = localStorage.getItem('bigbacks_paths_v1');
+    if (!raw) return;
+    const paths = JSON.parse(raw);
+    let changed = false;
+    Object.keys(paths).forEach(k => {
+      if (!isValidPath(paths[k])) { delete paths[k]; changed = true; }
+    });
+    if (changed) {
+      localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
+      console.warn('[BigBacks Hub] scrubbed stale path overrides on boot');
+    }
+  } catch {}
+})();
 
 // ─── Utils ────────────────────────────────────────────────────────────────
 function esc(s) {
