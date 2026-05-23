@@ -394,8 +394,15 @@ function wireInstallPrompt() {
 
 function getUserPath(key, defaultPath) {
   try {
-    const paths = JSON.parse(localStorage.getItem('bigbacks_paths_v1') || '{}');
-    return paths[key] || defaultPath;
+    const paths  = JSON.parse(localStorage.getItem('bigbacks_paths_v1') || '{}');
+    const stored = paths[key];
+    // When deployed, ignore stale local-dev paths (folder names with spaces)
+    if (stored && IS_DEPLOYED && (stored.includes(' ') || stored.includes('%20'))) {
+      delete paths[key];
+      localStorage.setItem('bigbacks_paths_v1', JSON.stringify(paths));
+      return defaultPath;
+    }
+    return stored || defaultPath;
   } catch { return defaultPath; }
 }
 
