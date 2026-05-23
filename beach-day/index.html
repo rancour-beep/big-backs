@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Shad" />
+  <meta name="description" content="Big Backth Beach Day — a cute carpool, travel & cost organiser made by Shad. v0.2" />
+  <meta name="creator" content="Shad" />
+  <meta name="version" content="0.2" />
+  <title>Big Backth Beach Day · v0.2 · by Shad 🏖</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="shared-profile.js"></script>
+</head>
+<body>
+
+  <div id="toast-container" aria-live="polite"></div>
+  <div id="color-menu-host"></div>
+
+  <!-- Chat -->
+  <button id="chat-fab" class="chat-fab" aria-label="Open chat">
+    <span class="chat-fab-emoji">💬</span>
+    <span class="chat-fab-label">chat</span>
+    <span class="chat-fab-badge" id="chat-unread" hidden>0</span>
+  </button>
+
+  <div id="chat-overlay"></div>
+  <aside id="chat-panel" aria-label="Big Backth Chat">
+    <div class="chat-header">
+      <div class="chat-header-title">
+        <span class="chat-header-emoji">💬</span>
+        <div>
+          <h2>Big Backth Chat</h2>
+          <div class="chat-header-sub" id="chat-status">tho cozy ♡</div>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button id="chat-room-btn" class="chat-icon-btn" title="Chat room thettings" aria-label="Chat room">🌐</button>
+        <button id="chat-clear" class="chat-icon-btn" title="Clear all metthageth" aria-label="Clear chat">🗑</button>
+        <button id="chat-close" class="chat-icon-btn" title="Cloth chat" aria-label="Close chat">✕</button>
+      </div>
+    </div>
+
+    <div id="chat-signin" class="chat-signin">
+      <div class="chat-signin-inner">
+        <h3>Hi! Who are you? ♡</h3>
+        <p class="chat-signin-hint">Drop in a pic and a name — tho everyone knowth who'th talking.</p>
+
+        <button type="button" id="signin-avatar" class="chat-signin-avatar" title="Click to upload a picture" aria-label="Upload picture">
+          <span class="sa-placeholder">📸</span>
+        </button>
+        <input type="file" id="signin-file" accept="image/*" capture="user" hidden />
+
+        <input type="text" id="signin-name" class="chat-signin-name" placeholder="Your name" maxlength="30" autocomplete="off" />
+
+        <button id="signin-btn" class="btn btn-primary btn-full">Join the chat ♡</button>
+
+        <p class="chat-signin-note">
+          ⚠ Right now this chat livth on <strong>thith device only</strong> (and thyncth between tabth).
+          To make it real multi-device chat, follow the <strong>chat thetup</strong> in the README ♡
+        </p>
+      </div>
+    </div>
+
+    <div id="chat-main" class="chat-main" hidden>
+      <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+      <div class="chat-typing-bar">
+        <div class="chat-me-avatar" id="chat-me-avatar" title="Thigned in"></div>
+        <input type="text" id="chat-input" placeholder="Thay thomething..." maxlength="500" autocomplete="off" />
+        <button id="chat-send" class="chat-send-btn" aria-label="Send" title="Send">↑</button>
+        <button id="chat-signout" class="chat-signout-btn" title="Thign out" aria-label="Sign out">🚪</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Modal -->
+  <div id="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3 id="modal-title"></h3>
+      <div id="modal-body"></div>
+      <form id="modal-form"></form>
+      <div class="modal-actions">
+        <button type="button" id="modal-cancel-btn" class="btn btn-ghost">Canthel</button>
+        <button type="submit" form="modal-form" id="modal-confirm-btn" class="btn btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div id="settings-overlay"></div>
+  <aside id="settings-drawer" aria-label="Thettingth">
+    <div class="drawer-header">
+      <h2>Thettingth</h2>
+      <button id="settings-close-btn" aria-label="Cloth">✕</button>
+    </div>
+    <div class="drawer-body">
+      <button id="copy-lineup-btn" class="btn btn-primary btn-full">📋 Copy Lineup</button>
+      <button id="copy-travel-btn" class="btn btn-secondary btn-full">🚗 Copy Travel Plan</button>
+      <button id="reset-btn" class="btn btn-danger btn-full">↺ Rethet to Default</button>
+      <div class="drawer-volume">
+        <span class="dv-icon" id="dv-icon">🔊</span>
+        <label for="volume-slider" class="visually-hidden">Volume</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" />
+        <span class="dv-label">Volume</span>
+      </div>
+      <div class="drawer-note">
+        Made by <strong>Shad</strong> ♡ for the big backth ☁<br>
+        <span class="drawer-version">version 0.2</span>
+      </div>
+    </div>
+  </aside>
+
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <span class="header-emoji">🏖</span>
+        <div class="header-text">
+          <h1>Big Backth Beach Day</h1>
+          <div class="header-sub">
+            Going to <span id="beach-name" class="dest-name" title="Double-click to rename"></span> <span class="heart">♡</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="mute-btn" class="circle-btn mute-btn" aria-label="Toggle thound" title="Toggle thound">🔊</button>
+        <button id="settings-btn" class="circle-btn settings-btn" aria-label="Open thettingth">⚙</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="cars-section">
+      <div class="section-header">
+        <h2>Carth ✿</h2>
+        <button id="add-car-btn" class="btn btn-secondary btn-sm">+ Add Car</button>
+      </div>
+      <div id="cars-grid"></div>
+    </section>
+
+    <section id="pool-section">
+      <div class="section-header">
+        <h2>Not in a car yet ☁</h2>
+        <button id="add-person-btn" class="btn btn-secondary btn-sm">+ Add Perthon</button>
+      </div>
+      <div id="pool-zone" class="pool-zone" data-drop-target='{"type":"pool"}'></div>
+    </section>
+
+    <section id="travel-section">
+      <div class="section-header">
+        <h2>Travel &amp; Coth ✿</h2>
+        <span class="section-hint">how everyone'th getting there ♡</span>
+      </div>
+      <div id="travel-list"></div>
+      <div id="totals-card" class="totals-card"></div>
+    </section>
+
+    <footer class="page-footer">
+      <span class="pf-line">
+        🏖 <strong>Big Backth Beach Day</strong> · v0.2
+      </span>
+      <span class="pf-line">
+        Created &amp; owned by <strong class="pf-creator">Shad</strong> ♡
+      </span>
+      <span class="pf-line pf-copy">© 2026 Shad — all rightth rethurved ♡</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

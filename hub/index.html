@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Shad" />
+  <meta name="description" content="Big Backth Hub — the home of the Big Backs network. Made by Shad." />
+  <title>Big Backth Hub ♡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#E5A8B3" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Big Backth" />
+  <script src="shared-profile.js"></script>
+  <script>
+    // Register service worker for offline + installability
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div id="hub">
+
+  <!-- Background animation -->
+  <div class="hub-bg">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="bg-scanlines"></div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-emoji">🏠</span>
+      <span class="tb-title">BIG BACKTH</span>
+      <span class="tb-sep">·</span>
+      <span class="tb-sub">network</span>
+    </div>
+    <div class="tb-right">
+      <button id="btn-install" class="install-btn" title="Add to home screen" hidden>⬇ INSTALL</button>
+      <button id="btn-settings" class="icon-btn" title="Settings">⚙</button>
+      <button id="profile-chip" class="profile-chip"></button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-tag">SHAD'S DIGITAL CARPOOL UNIVERTHE</div>
+    <h1 class="hero-title">
+      <span class="ht-line ht-big">the big backth</span>
+      <span class="ht-line ht-network">N E T W O R K</span>
+    </h1>
+    <p class="hero-sub">every app in one place — your name, your face, your wins ♡</p>
+  </section>
+
+  <!-- App grid -->
+  <section class="apps-section">
+    <div class="section-title">🎀 APPS</div>
+    <div id="app-grid" class="app-grid"></div>
+  </section>
+
+  <!-- Activity feed -->
+  <section class="feed-section">
+    <div class="section-title">✨ RECENT ACTIVITY</div>
+    <div id="activity-list" class="feed-list"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="hub-footer">
+    <div>🏠 Big Backth Hub · v0.1</div>
+    <div>Made &amp; owned by <strong>Shad</strong> ♡ — © 2026, all rightth rethurved</div>
+  </footer>
+</div>
+
+<!-- ════════════════ PROFILE MODAL ════════════════ -->
+<div id="pm-overlay" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="pm-title">EDIT YOUR PROFILE</h3>
+      <button id="pm-close" class="icon-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pm-avatar-row">
+        <button id="pm-pic-btn" class="pm-pic-preview" id="pm-pic-preview" title="Upload picture"></button>
+        <input type="file" id="pm-pic-input" accept="image/*" hidden />
+        <div class="pm-pic-help">
+          <div class="pm-pic-label">Tap to upload</div>
+          <div class="pm-pic-sub">.jpg / .png / .heic</div>
+        </div>
+      </div>
+      <div id="pm-pic-preview" class="pm-pic-preview" style="display:none"></div>
+
+      <div class="form-field">
+        <label class="ff-label">YOUR NAME</label>
+        <input type="text" id="pm-name-input" maxlength="30" placeholder="e.g. Shad" class="ff-input" />
+      </div>
+
+      <div class="form-field">
+        <label class="ff-label">YOUR ACCENT COLOUR</label>
+        <input type="color" id="pm-color-input" value="#E5A8B3" class="ff-color" />
+        <div class="ff-help">Thith colour reprethentth you across all the appth</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="pm-save" class="btn-primary">💾 SAVE PROFILE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ SETTINGS MODAL ════════════════ -->
+<div id="settings-overlay" class="modal-overlay">
+  <div class="modal-card modal-card-lg">
+    <div class="modal-header">
+      <h3>HUB SETTINGS</h3>
+      <button id="btn-settings-close" class="icon-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-section">
+        <div class="ss-title">APP PATHS</div>
+        <div class="ss-help">If you've deployed each app at a custom URL (e.g. GitHub Pages), paste them here. Leave blank to use the relative defaults.</div>
+        <div class="form-field">
+          <label class="ff-label">🏖 BEACH DAY URL</label>
+          <input type="text" id="path-beachDay" placeholder="../big backs beach day/" class="ff-input" />
+        </div>
+        <div class="form-field">
+          <label class="ff-label">🏁 RACES URL</label>
+          <input type="text" id="path-races" placeholder="../Big Backs Races/" class="ff-input" />
+        </div>
+        <div class="form-field">
+          <label class="ff-label">🎵 JAM URL</label>
+          <input type="text" id="path-jam" placeholder="../Big Backs Jam/" class="ff-input" />
+        </div>
+        <button id="btn-save-paths" class="btn-primary">Save paths</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="ss-title">DATA</div>
+        <div class="settings-actions">
+          <button id="btn-clear-activity" class="btn-secondary">🗑 Clear activity feed</button>
+          <button id="btn-clear-profile" class="btn-danger">↺ Reset profile</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="ss-title">CONNECT YOUR APPS</div>
+        <div class="ss-help">
+          To make activity flow into this hub from the other apps, copy <code>shared-profile.js</code> into each app's folder and include it before <code>app.js</code> / <code>main.js</code>:
+          <pre>&lt;script src="shared-profile.js"&gt;&lt;/script&gt;</pre>
+          Then call <code>BigBacks.activity.log('beachDay','upload',{name:'MJ'})</code> in your app code. The hub picks it up live.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

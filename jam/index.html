@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Shad" />
+  <meta name="description" content="Big Backth Jam — collaborative Spotify playlist with QR code sharing. Made by Shad." />
+  <title>Big Backth Jam 🎵</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="shared-profile.js"></script>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<div id="welcome" class="screen active">
+  <div class="welcome-bg"></div>
+  <div class="welcome-inner">
+    <div class="logo-block">
+      <div class="logo-emoji">🎵</div>
+      <h1 class="app-title">Big Backth <span class="title-jam">Jam</span></h1>
+      <p class="app-tag">collaborative thpotify playlitht ♡ tcan to join</p>
+    </div>
+
+    <div id="setup-warning" class="setup-warning" hidden>
+      <strong>⚠ Setup needed:</strong> open <code>js/config.js</code> and paste your Spotify Client ID. Full instructions in the README ♡
+    </div>
+
+    <div class="welcome-features">
+      <div class="feat-row"><span class="feat-i">🎵</span> Create a collaborative playlitht in one click</div>
+      <div class="feat-row"><span class="feat-i">📱</span> Big QR code — friendth than to join</div>
+      <div class="feat-row"><span class="feat-i">🔍</span> Thearch &amp; add tunth right here, or open in Thpotify</div>
+      <div class="feat-row"><span class="feat-i">▶</span> Liveth on your own Thpotify account ♡</div>
+    </div>
+
+    <button id="btn-login" class="btn-spotify">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.6 14.4c-.2.3-.6.4-.9.2-2.5-1.5-5.7-1.9-9.4-1-.4.1-.7-.1-.8-.5-.1-.4.1-.7.5-.8 4.1-.9 7.6-.5 10.4 1.2.3.2.4.6.2.9zm1.2-2.8c-.3.4-.7.5-1.1.3-2.9-1.8-7.3-2.3-10.7-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 3.9-1.2 8.7-.6 12 1.4.3.2.5.7.3 1.1zm.1-2.9c-3.4-2-9.1-2.2-12.4-1.2-.5.2-1-.1-1.2-.6-.2-.5.1-1 .6-1.2 3.8-1.1 10.1-.9 14 1.4.4.3.6.9.3 1.3-.3.4-.9.6-1.3.3z"/></svg>
+      <span>CONNECT THPOTIFY</span>
+    </button>
+
+    <div class="app-footer">
+      <span class="ver" id="app-version">v0.1 · by Shad</span>
+      <span class="sep">·</span>
+      <span>Made with ♡ for the big backth</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ CONNECTING ════════════════ -->
+<div id="connecting" class="screen">
+  <div class="connect-inner">
+    <div class="spinner"></div>
+    <div class="connect-text">Connecting to Thpotify...</div>
+  </div>
+</div>
+
+<!-- ════════════════ HUB ════════════════ -->
+<div id="hub" class="screen">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mini">🎵 Big Backth Jam</div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="hub-user-avatar"></div>
+        <div class="user-info">
+          <div class="user-name" id="hub-user-name">—</div>
+          <div class="user-id" id="hub-user-id">—</div>
+        </div>
+      </div>
+      <button id="btn-logout" class="ghost-btn" title="Sign out">↩</button>
+    </div>
+  </header>
+
+  <main class="hub-main">
+    <section class="card create-card">
+      <div class="card-title">START A NEW JAM</div>
+      <p class="card-desc">Tcheate a collaborative playlitht — anyone with the QR code or link can add thongth ♡</p>
+      <div class="input-row">
+        <input id="jam-name-input" type="text" maxlength="60" placeholder="Beach Day Banger Hourth" class="text-input" />
+        <button id="btn-create-jam" class="btn-primary">🎵 Create the Jam</button>
+      </div>
+    </section>
+
+    <section class="card join-card">
+      <div class="card-title">JOIN EXITHTING JAM</div>
+      <p class="card-desc">Pathte a Thpotify playlitht link or a Big Backth Jam invite URL</p>
+      <div class="input-row">
+        <input id="jam-load-input" type="text" placeholder="https://open.spotify.com/playlist/..." class="text-input" />
+        <button id="btn-load-jam" class="btn-secondary">Join</button>
+      </div>
+    </section>
+
+    <section id="recent-jams" class="recent-jams"></section>
+  </main>
+</div>
+
+<!-- ════════════════ JAM ════════════════ -->
+<div id="jam" class="screen">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button id="btn-leave-jam" class="ghost-btn">← LEAVE JAM</button>
+    </div>
+    <div class="topbar-center">
+      <div class="jam-title-bar">
+        <div class="jam-title" id="jam-title">—</div>
+        <div class="jam-owner" id="jam-owner">—</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-spotify-open" class="ghost-btn" title="Open in Spotify">▶ OPEN</button>
+    </div>
+  </header>
+
+  <main class="jam-main">
+    <!-- LEFT: QR + share -->
+    <aside class="jam-left">
+      <div class="card qr-card">
+        <div class="card-title">JOIN THITH JAM</div>
+        <div class="qr-wrap">
+          <canvas id="qr-canvas"></canvas>
+        </div>
+        <div class="qr-cap">Than with phone camera ♡</div>
+        <div class="share-row">
+          <input id="jam-share-url" readonly class="text-input share-url" />
+          <button id="btn-share-jam" class="btn-primary share-btn">📋</button>
+        </div>
+      </div>
+
+      <div id="now-playing" class="now-playing"></div>
+    </aside>
+
+    <!-- RIGHT: tracks + search -->
+    <section class="jam-right">
+      <div class="card track-card">
+        <div class="card-title">THE JAM</div>
+        <div id="jam-tracks" class="track-list">
+          <div class="empty-state">Loading...</div>
+        </div>
+      </div>
+
+      <div class="card search-card">
+        <div class="card-title">ADD MORE TUNTH</div>
+        <input id="search-input" type="text" placeholder="🔍 Thearch Thpotify..." class="text-input search-input" />
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

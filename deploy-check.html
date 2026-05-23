@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big Backth Network — Deploy Check</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script src="hub/shared-profile.js"></script>
+  <style>
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    body { background:#04040C; color:#fff; font-family:'Manrope',sans-serif; min-height:100vh; padding:2rem 1.5rem }
+    .container { max-width:780px; margin:0 auto }
+    h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; letter-spacing:0.04em;
+         background:linear-gradient(90deg,#E5A8B3,#FF4500,#1DB954);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+         margin-bottom:0.4rem }
+    .sub { color:rgba(255,255,255,0.5); font-size:0.95rem; margin-bottom:2rem }
+    .card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px;
+            padding:1.2rem 1.4rem; margin-bottom:1rem }
+    .card-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; margin-bottom:0.7rem; letter-spacing:0.06em }
+
+    .check-row { display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0;
+                 border-bottom:1px solid rgba(255,255,255,0.06); gap:1rem }
+    .check-row:last-child { border-bottom:none }
+    .cr-label { font-size:0.92rem; flex:1 }
+    .cr-status { font-size:0.82rem; font-weight:700; padding:0.25rem 0.7rem; border-radius:99px; white-space:nowrap }
+    .ok { background:rgba(29,185,84,0.18); color:#1ED760 }
+    .fail { background:rgba(255,80,80,0.18); color:#FF9090 }
+    .warn { background:rgba(255,180,0,0.18); color:#FFD080 }
+    .pending { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5) }
+
+    .url-input { display:flex; gap:0.5rem; margin-bottom:0.5rem }
+    .url-input input { flex:1; padding:0.65rem 0.85rem; font-family:'Manrope',sans-serif; font-size:0.85rem;
+                       background:rgba(0,0,0,0.4); border:1.5px solid rgba(255,255,255,0.12); border-radius:8px;
+                       color:#fff; outline:none }
+    .url-input input:focus { border-color:#E5A8B3 }
+    .url-input button { padding:0.65rem 1.1rem; font-family:'Manrope',sans-serif; font-size:0.85rem; font-weight:700;
+                       background:linear-gradient(135deg,#E5A8B3,#FF4500); color:#fff; border:none; border-radius:8px; cursor:pointer }
+    .url-input button:hover { transform:translateY(-1px) }
+
+    .app-link { display:inline-flex; align-items:center; gap:0.4rem; padding:0.4rem 0.85rem; background:rgba(255,255,255,0.08);
+                border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; text-decoration:none; font-size:0.82rem;
+                font-weight:600; transition:all 0.15s }
+    .app-link:hover { background:rgba(255,255,255,0.13); transform:translateY(-1px) }
+
+    .summary { padding:1rem 1.2rem; border-radius:10px; margin-top:1rem; font-size:0.88rem; line-height:1.6 }
+    .summary.ok { background:rgba(29,185,84,0.12); border:1px solid rgba(29,185,84,0.3) }
+    .summary.fail { background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.3) }
+    .summary.warn { background:rgba(255,180,0,0.12); border:1px solid rgba(255,180,0,0.3) }
+
+    code { background:rgba(0,0,0,0.5); padding:0.1em 0.4em; border-radius:4px; font-size:0.85em; color:#E5A8B3 }
+    .small { font-size:0.78rem; color:rgba(255,255,255,0.45); margin-top:0.5rem }
+
+    .footer { text-align:center; color:rgba(255,255,255,0.3); font-size:0.78rem; padding:2rem 0 1rem; font-style:italic }
+    .footer strong { color:#E5A8B3 }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>🏖 Deploy Check</h1>
+  <div class="sub">Verify your Big Backth Network is wired up correctly ♡</div>
+
+  <!-- ── Environment ── -->
+  <div class="card">
+    <div class="card-title">🌐 ENVIRONMENT</div>
+    <div class="check-row">
+      <div class="cr-label">Current URL</div>
+      <span class="cr-status pending" id="env-url">—</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Looks like deployment?</div>
+      <span class="cr-status pending" id="env-deployed">—</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Same-origin profile sync available?</div>
+      <span class="cr-status pending" id="env-origin">—</span>
+    </div>
+  </div>
+
+  <!-- ── Shared Profile ── -->
+  <div class="card">
+    <div class="card-title">👤 SHARED PROFILE</div>
+    <div class="check-row">
+      <div class="cr-label"><code>shared-profile.js</code> loaded</div>
+      <span class="cr-status pending" id="sp-loaded">—</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Profile set up</div>
+      <span class="cr-status pending" id="sp-profile">—</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Activity feed has entries</div>
+      <span class="cr-status pending" id="sp-activity">—</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">App stats recorded</div>
+      <span class="cr-status pending" id="sp-stats">—</span>
+    </div>
+  </div>
+
+  <!-- ── Each App Reachable ── -->
+  <div class="card">
+    <div class="card-title">🚦 APP REACHABILITY</div>
+    <div id="apps-list"></div>
+    <div class="small">Click each link to manually verify it loads. Tick the box when it opens correctly.</div>
+  </div>
+
+  <!-- ── Critical config ── -->
+  <div class="card">
+    <div class="card-title">🔑 CRITICAL CONFIG</div>
+    <div class="check-row">
+      <div class="cr-label">Spotify Client ID set (Jam app)</div>
+      <span class="cr-status pending" id="cfg-spotify">manual check</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Firebase config set (Races multiplayer — optional)</div>
+      <span class="cr-status pending" id="cfg-firebase">optional</span>
+    </div>
+    <div class="check-row">
+      <div class="cr-label">Spotify redirect URI registered for current URL</div>
+      <span class="cr-status pending" id="cfg-spotify-redirect">manual check</span>
+    </div>
+    <div class="small">For Spotify: edit <code>jam/js/config.js</code>, paste Client ID, then add the deployed URL as a redirect URI in your Spotify Developer Dashboard.</div>
+  </div>
+
+  <!-- ── Summary ── -->
+  <div id="summary-box"></div>
+
+  <div class="footer">
+    🏖 <strong>Big Backth Network</strong> deploy check · <strong>v0.1</strong> · by Shad ♡
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const setStatus = (id, text, cls) => {
+  const el = $(id);
+  el.textContent = text;
+  el.className = 'cr-status ' + cls;
+};
+
+const APPS = [
+  { key:'hub',       name:'🏠 Hub',        path:'./hub/' },
+  { key:'beachDay',  name:'🏖 Beach Day',  path:'./beach-day/' },
+  { key:'races',     name:'🏁 Races',      path:'./races/' },
+  { key:'jam',       name:'🎵 Jam',        path:'./jam/' },
+];
+
+function run() {
+  // ── Environment
+  setStatus('env-url', location.href, 'pending');
+  const host = location.hostname;
+  const isDeployed = host.endsWith('.github.io') || host.endsWith('.netlify.app') || host.endsWith('.vercel.app');
+  const isLocal = host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.');
+  setStatus('env-deployed', isDeployed ? '✓ YES — production' : (isLocal ? '⚠ Local dev' : '? unknown'),
+            isDeployed ? 'ok' : (isLocal ? 'warn' : 'fail'));
+  setStatus('env-origin', host ? `✓ origin = ${location.origin}` : '✗ no origin', 'ok');
+
+  // ── Shared profile
+  const hasBB = typeof window.BigBacks !== 'undefined';
+  setStatus('sp-loaded', hasBB ? '✓ loaded' : '✗ NOT loaded', hasBB ? 'ok' : 'fail');
+
+  if (hasBB) {
+    const profile = BigBacks.profile.get();
+    setStatus('sp-profile', profile?.name ? `✓ ${profile.name}` : '⚠ not set up — open Hub to set it', profile?.name ? 'ok' : 'warn');
+
+    const activity = BigBacks.activity.recent(50);
+    setStatus('sp-activity', activity.length > 0 ? `✓ ${activity.length} events` : '⚠ none yet — use the apps to generate some',
+              activity.length > 0 ? 'ok' : 'warn');
+
+    const stats = BigBacks.stats.all();
+    const haveStats = Object.keys(stats).length > 0;
+    setStatus('sp-stats', haveStats ? `✓ ${Object.keys(stats).join(', ')}` : '⚠ no stats yet',
+              haveStats ? 'ok' : 'warn');
+  } else {
+    setStatus('sp-profile', '— (shared-profile.js missing)', 'fail');
+    setStatus('sp-activity', '— (shared-profile.js missing)', 'fail');
+    setStatus('sp-stats', '— (shared-profile.js missing)', 'fail');
+  }
+
+  // ── App reachability — render links + try to fetch
+  const wrap = $('apps-list');
+  wrap.innerHTML = APPS.map(app => `
+    <div class="check-row" id="app-${app.key}-row">
+      <div class="cr-label">${app.name} <code>${app.path}</code></div>
+      <div style="display:flex;gap:0.4rem;align-items:center">
+        <a class="app-link" href="${app.path}" target="_blank">OPEN ↗</a>
+        <span class="cr-status pending" id="app-${app.key}-status">checking…</span>
+      </div>
+    </div>
+  `).join('');
+
+  APPS.forEach(app => {
+    fetch(app.path + 'index.html', { method: 'HEAD' })
+      .then(r => {
+        if (r.ok) setStatus(`app-${app.key}-status`, '✓ ' + r.status, 'ok');
+        else setStatus(`app-${app.key}-status`, '✗ HTTP ' + r.status, 'fail');
+      })
+      .catch(() => {
+        // Try GET as fallback (some hosts block HEAD)
+        fetch(app.path + 'index.html').then(r => {
+          if (r.ok) setStatus(`app-${app.key}-status`, '✓ ' + r.status, 'ok');
+          else setStatus(`app-${app.key}-status`, '✗ HTTP ' + r.status, 'fail');
+        }).catch(() => setStatus(`app-${app.key}-status`, '✗ unreachable', 'fail'));
+      });
+  });
+
+  // ── Critical config — check via fetch for placeholder strings
+  fetch('./jam/js/config.js').then(r => r.text()).then(txt => {
+    if (txt.includes('PASTE_YOUR_SPOTIFY_CLIENT_ID')) {
+      setStatus('cfg-spotify', '✗ placeholder — paste your Client ID', 'fail');
+    } else {
+      setStatus('cfg-spotify', '✓ configured', 'ok');
+    }
+  }).catch(() => setStatus('cfg-spotify', '? jam not deployed', 'warn'));
+
+  fetch('./races/firebase-config.js').then(r => r.text()).then(txt => {
+    if (txt.includes('PASTE_YOUR_API_KEY')) {
+      setStatus('cfg-firebase', '⚠ not configured — multiplayer disabled (AI bots only)', 'warn');
+    } else {
+      setStatus('cfg-firebase', '✓ configured', 'ok');
+    }
+  }).catch(() => setStatus('cfg-firebase', '? races not deployed', 'warn'));
+
+  // Spotify redirect URI — best we can do is remind to verify
+  setStatus('cfg-spotify-redirect', 'add ' + location.origin + location.pathname.replace(/deploy-check\.html$/, 'jam/') + ' in Spotify dashboard', 'warn');
+
+  // ── Final summary
+  setTimeout(() => {
+    const fails = document.querySelectorAll('.cr-status.fail').length;
+    const warns = document.querySelectorAll('.cr-status.warn').length;
+    const box = $('summary-box');
+    if (fails === 0 && warns === 0) {
+      box.className = 'summary ok';
+      box.innerHTML = '🎉 <b>Everything looks good!</b> Network is fully wired up. Share the URL with the big backth ♡';
+    } else if (fails === 0) {
+      box.className = 'summary warn';
+      box.innerHTML = `⚠ <b>${warns} warning${warns>1?'s':''}</b> — non-critical issues. Profile + activity may not be populated yet (that's fine, use the apps to fill them up).`;
+    } else {
+      box.className = 'summary fail';
+      box.innerHTML = `❌ <b>${fails} failure${fails>1?'s':''}</b> — see red rows above. Check that all 4 app folders exist in your deployment.`;
+    }
+  }, 1500);
+}
+
+run();
+</script>
+</body>
+</html>
