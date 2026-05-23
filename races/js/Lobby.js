@@ -1,10 +1,11 @@
 import { CHARACTERS, CAR_TYPES } from './config.js';
 
 export class Lobby {
-  constructor(characters, onRaceStart) {
-    this.characters  = characters || CHARACTERS; // allow main.js to pass null
-    this.onRaceStart = onRaceStart;
-    this.selected    = null;
+  constructor(characters, onRaceStart, onCharSelect) {
+    this.characters   = characters || CHARACTERS;
+    this.onRaceStart  = onRaceStart;
+    this.onCharSelect = onCharSelect || (() => {});
+    this.selected     = null;
     this._render();
   }
 
@@ -52,6 +53,7 @@ export class Lobby {
 
     this.selected = char;
     this._updatePanel(char);
+    this.onCharSelect(char);
   }
 
   _updatePanel(char) {

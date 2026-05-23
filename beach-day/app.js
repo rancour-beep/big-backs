@@ -1962,12 +1962,31 @@ const Chat = (() => {
     // ── API key setup (always shown first if missing) ──
     if (!apiKey) {
       const setupStatus = el('div', 'room-status');
-      setupStatus.innerHTML = '<strong>🔑 One-time thetup needed</strong><br><small>Free API key, 30 thecondth, no card.</small>';
+      setupStatus.innerHTML = '<strong>💬 Chat workth two wayth</strong>';
       body.appendChild(setupStatus);
 
+      // Option 1: Just use local chat (zero setup)
+      const localSection = el('div', 'room-section room-option-local');
+      localSection.innerHTML = `
+        <div class="ro-title">🏠 LOCAL CHAT <span class="ro-badge">no thetup</span></div>
+        <div class="ro-desc">Works right now. Lives on thith device + thyncs between tabth. Your metthageth perthitht across reloadth.</div>
+        <button type="button" class="btn btn-secondary btn-full ro-use-local">Use chat locally ♡</button>
+      `;
+      localSection.querySelector('.ro-use-local').addEventListener('click', () => {
+        hideModal();
+        showToast('Chat is ready — local mode ♡', 'success');
+      });
+      body.appendChild(localSection);
+
+      const or = el('div', 'room-or');
+      or.textContent = '— or —';
+      body.appendChild(or);
+
+      // Option 2: Cross-device (needs JSONbin key)
       const intro = el('div', 'room-section');
       intro.innerHTML = `
-        <p>Cross-device chat needth a tiny backend.<br>JSONbin.io gives you 100,000 requestth/month free ♡</p>
+        <div class="ro-title">🌐 CROSS-DEVICE CHAT <span class="ro-badge ro-badge-pro">30 thec thetup</span></div>
+        <p class="ro-desc">For friendth on other phoneth/devicheth. Needth a free JSONbin key (100k requestth/month).</p>
         <ol class="room-steps">
           <li>Open <a href="https://jsonbin.io/login" target="_blank" rel="noopener"><strong>jsonbin.io</strong></a> → thign up with Google or email</li>
           <li>From the dashboard, click <strong>API Keys</strong> → copy your <strong>X-Master-Key</strong></li>

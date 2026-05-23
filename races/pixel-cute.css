@@ -1,0 +1,243 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   🎀 PIXEL-CUTE  —  shared design overlay for the Big Backth Network
+   Adds chunky pixel-art borders + soft pastel accents + cute pixel fonts.
+   Include AFTER the app's main style.css to layer on top.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&family=Press+Start+2P&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Pixel-cute palette ── */
+  --pc-cream:   #FFF6EE;
+  --pc-pink:    #FFC9D6;
+  --pc-rose:    #E8A0B5;
+  --pc-rose-d:  #9B5A75;
+  --pc-mint:    #C9E8D6;
+  --pc-sky:     #C9DCFF;
+  --pc-lav:     #DCC9FF;
+  --pc-peach:   #FFD6B0;
+  --pc-butter:  #FFF0B0;
+  --pc-coal:    #4A3340;
+  --pc-coal-d:  #2C1F26;
+  --pc-bg:      #FFF8F2;
+
+  /* ── Font stacks ── */
+  --pc-pixel:   'Silkscreen', monospace;
+  --pc-pixel-2: 'VT323', monospace;
+  --pc-arcade:  'Press Start 2P', monospace;
+  --pc-soft:    'Quicksand', 'Manrope', sans-serif;
+}
+
+/* ─── Chunky pixel button ─── */
+.pc-btn,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-ghost,
+.race-btn,
+.fin-btn,
+.gu-btn,
+.gb-race-btn,
+.btn-spotify,
+.tc-btn,
+.op-btn,
+.show-all-btn,
+.fab-create,
+.install-btn {
+  font-family: var(--pc-pixel), monospace !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase;
+  border-radius: 8px !important;
+  border: 3px solid var(--pc-coal) !important;
+  box-shadow: 4px 4px 0 var(--pc-coal) !important;
+  transition: transform 0.08s ease, box-shadow 0.08s ease !important;
+  position: relative;
+  image-rendering: pixelated;
+}
+.pc-btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover,
+.race-btn:not(:disabled):hover,
+.fin-btn:hover,
+.gu-btn:hover,
+.gb-race-btn:hover,
+.btn-spotify:hover,
+.op-btn:hover,
+.show-all-btn:hover,
+.install-btn:hover {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 var(--pc-coal) !important;
+}
+.pc-btn:active,
+.btn-primary:active,
+.race-btn:not(:disabled):active,
+.fin-btn:active,
+.btn-spotify:active,
+.op-btn:active,
+.install-btn:active {
+  transform: translate(4px, 4px) !important;
+  box-shadow: 0 0 0 var(--pc-coal) !important;
+}
+
+/* ─── Pixel-cute headings ─── */
+h1, .game-title, .gh-title, .gt-big, .gt-races,
+.app-title, .ld-logo, .ht-big, .ht-network,
+.fin-place, .countdown, .modal-header h3, .card-title,
+.section-title, .sp-name, .hh-title, .lh-tag, .hero-tag,
+.hb-label, .sc-unit, .ff-label, .ss-title, .feat-row,
+.cc-name, .stat-label, .gu-sect-title {
+  font-family: var(--pc-pixel) !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* Soft pixel font on body */
+body, .sp-desc, .sp-quote, .hub-footer, .card-desc, .ff-help,
+.text-input, .op-status, .stat-num, .recent-item, .pm-name,
+.ri-name, .ri-owner, .feed-empty .fe-sub, .feed-empty .fe-tip {
+  font-family: var(--pc-soft) !important;
+}
+
+/* ─── Soft pixel card ─── */
+.card, .recent-item, .app-card, .sel-panel, .modal-card, .car-card,
+.travel-row, .totals-card, .gu-section, .feed-row, .feed-empty,
+.create-card, .join-card, .qr-card, .track-card, .search-card,
+.welcome-features, .now-playing {
+  border-radius: 12px !important;
+  border: 3px solid var(--pc-coal) !important;
+  box-shadow: 5px 5px 0 var(--pc-coal-d) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+.app-card:hover, .car-card:hover, .recent-item:hover, .char-card:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 7px 7px 0 var(--pc-coal-d) !important;
+}
+
+/* Slightly softer cards (inner) */
+.stat-track, .bp-track, .gu-stat-track, .ld-bar-track,
+.fr-icon, .pc-avatar, .cc-icon, .avatar, .upload-preview,
+.fab-emoji, .chat-fab-emoji {
+  border-radius: 6px !important;
+}
+
+/* Round chips & avatars stay round */
+.avatar, .pc-avatar, .user-avatar, .chat-avatar, .chat-me-avatar,
+.profile-chip, .icon-btn, .fab-btn, .chat-fab, .circle-btn,
+.color-swatch, .gu-rim-dot, .ob-pos, .fr-icon {
+  border-radius: 999px !important;
+}
+
+/* ─── Pixel checkered top border for chunky cards ─── */
+.card::before, .modal-card::before {
+  content: '';
+  display: block;
+  height: 6px;
+  margin: -1.1rem -1.25rem 1rem;
+  background-image:
+    linear-gradient(90deg,
+      var(--pc-rose) 0 12.5%, var(--pc-coal) 12.5% 25%,
+      var(--pc-rose) 25% 37.5%, var(--pc-coal) 37.5% 50%,
+      var(--pc-rose) 50% 62.5%, var(--pc-coal) 62.5% 75%,
+      var(--pc-rose) 75% 87.5%, var(--pc-coal) 87.5% 100%
+    );
+  background-size: 24px 6px;
+  background-repeat: repeat-x;
+  border-radius: 9px 9px 0 0;
+}
+
+/* ─── Pixel input ─── */
+.text-input, .ff-input, input[type="text"], input[type="email"],
+input[type="number"], input[type="search"], input[type="password"],
+input[type="time"], textarea, select, .op-input,
+.travel-row input, .travel-row select, .modal-field input,
+.signin-name {
+  border-radius: 8px !important;
+  border: 3px solid var(--pc-coal) !important;
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.08) !important;
+  font-family: var(--pc-soft) !important;
+}
+
+/* ─── Pixel cursor accent ─── */
+body { cursor: default; }
+
+/* ─── Cute ♡ decorations sprinkled in headers ─── */
+.section-title::after, .card-title::after, .gh-title::after,
+.os-title::after, .hb-label::after {
+  content: ' ✦';
+  color: var(--pc-rose);
+  font-family: var(--pc-pixel);
+}
+
+/* ─── Pixelated image rendering ─── */
+canvas#minimap, canvas#qr-canvas, .avatar, .pc-avatar {
+  image-rendering: pixelated;
+}
+
+/* ─── Body background — soft pastel grid (visible behind apps) ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(232,160,181,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,160,181,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ─── Toast as pixel card ─── */
+.toast {
+  border-radius: 10px !important;
+  border: 3px solid var(--pc-coal) !important;
+  box-shadow: 4px 4px 0 var(--pc-coal-d) !important;
+  font-family: var(--pc-soft) !important;
+  font-weight: 600;
+}
+
+/* ─── Pixel sparkle animation on important things ─── */
+@keyframes pc-sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50%      { transform: scale(1.2) rotate(15deg); opacity: 0.7; }
+}
+.heart, .pc-sparkle {
+  display: inline-block;
+  animation: pc-sparkle 2.4s ease-in-out infinite;
+}
+
+/* ─── Settings drawer / panel adjustments ─── */
+#settings-drawer, #chat-panel {
+  border-left: 3px solid var(--pc-coal) !important;
+}
+.drawer-note, .pc-cute-credit {
+  font-family: var(--pc-pixel-2) !important;
+  font-size: 1rem !important;
+}
+
+/* ─── Disable conflicting hover rotations that fight the pixel feel ─── */
+.settings-btn:hover { transform: translate(2px, 2px) !important; }
+
+/* ─── Speed / countdown — keep them pixel-arcade ─── */
+.sc-speed, .countdown, .sc-gear-val, .hb-val, .ld-logo,
+.gt-big, .gt-races, .ht-big, .ht-network {
+  font-family: var(--pc-pixel) !important;
+  text-shadow:
+    2px 2px 0 var(--pc-coal-d),
+    -1px -1px 0 rgba(255,255,255,0.1) !important;
+}
+
+/* ─── Mobile: shrink pixel shadows so layout doesn't get crowded ─── */
+@media (max-width: 600px) {
+  .card, .recent-item, .app-card, .sel-panel, .modal-card, .car-card,
+  .travel-row, .totals-card, .feed-row {
+    box-shadow: 3px 3px 0 var(--pc-coal-d) !important;
+  }
+  .btn-primary, .btn-secondary, .race-btn, .fin-btn, .btn-spotify, .install-btn {
+    box-shadow: 3px 3px 0 var(--pc-coal) !important;
+  }
+  .pc-btn:hover, .btn-primary:hover, .race-btn:not(:disabled):hover,
+  .install-btn:hover {
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0 var(--pc-coal) !important;
+  }
+}

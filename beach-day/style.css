@@ -1307,3 +1307,11 @@ main {
   main { padding: 1rem 0.875rem 4rem; }
   .total-value { font-size: 2.1rem; }
 }
+
+/* ─── Chat room wizard (option cards) ────────────────────────────────────── */
+.room-option-local { background:rgba(173,216,189,0.10); border-color:rgba(173,216,189,0.4) !important; }
+.ro-title { font-size:0.7rem; font-weight:800; letter-spacing:0.1em; color:var(--text); text-transform:uppercase; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.5rem; }
+.ro-badge { font-size:0.58rem; padding:0.15rem 0.5rem; border-radius:99px; background:rgba(173,216,189,0.3); color:#2D5A3D; font-weight:700; letter-spacing:0.06em; }
+.ro-badge-pro { background:rgba(229,168,179,0.25); color:#7A4055; }
+.ro-desc { font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.45; }
+.ro-use-local { margin-top:0.3rem; }

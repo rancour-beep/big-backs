@@ -33,7 +33,12 @@ const WORLD_X = new THREE.Vector3(1, 0, 0);
 const urlRoom = new URLSearchParams(location.search).get('room');
 
 // ─── Boot lobby ───────────────────────────────────────────────────────────
-new Lobby(null, startLoading);
+new Lobby(null, startLoading, (char) => {
+  // Fires whenever a character card is clicked in the lobby
+  selectedChar = char;
+  const gBtn = document.getElementById('open-garage-btn');
+  if (gBtn) { gBtn.disabled = false; gBtn.style.setProperty('--btn-color', char.hex); }
+});
 buildOnlineUI();
 
 document.getElementById('garage-back-btn').addEventListener('click', closeGarage);
