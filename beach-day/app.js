@@ -288,25 +288,26 @@ const MAX_PEOPLE = 50;
 const TOUCH_THRESHOLD = 8;
 
 const DEFAULT_STATE = {
-  beachName: 'Brighton Beach',
+  beachName: 'Formby',
   cars: [
     { id: 'c1', name: "MJ's Car",     capacity: 4, seats: ['p1', 'p2', 'p3', null] },
     { id: 'c2', name: "Ringan's Car", capacity: 4, seats: ['p4', 'p5', 'p6', 'p7'] }
   ],
   pool: ['p8', 'p9', 'p10', 'p11', 'p12'],
   people: {
-    p1:  { id:'p1',  name:'MJ',            color:5, from:'Stoke',      transport:'drive', cost:30, arrival:'11:00', picture:'' },
-    p2:  { id:'p2',  name:'Friend',        color:3, from:'Stoke',      transport:'drive', cost:5,  arrival:'11:00', picture:'' },
-    p3:  { id:'p3',  name:'Erika',         color:6, from:'Stoke',      transport:'drive', cost:5,  arrival:'11:00', picture:'' },
-    p4:  { id:'p4',  name:'Ringan',        color:7, from:'Coventry',   transport:'drive', cost:25, arrival:'11:30', picture:'' },
-    p5:  { id:'p5',  name:'Rhianon',       color:4, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:30', picture:'' },
-    p6:  { id:'p6',  name:'Liane',         color:1, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:30', picture:'' },
-    p7:  { id:'p7',  name:'Evi',           color:9, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:30', picture:'' },
-    p8:  { id:'p8',  name:'Shad',          color:0, from:'Manchester', transport:'train', cost:22, arrival:'12:00', picture:'' },
-    p9:  { id:'p9',  name:'Ed',            color:2, from:'Birmingham', transport:'train', cost:18, arrival:'12:15', picture:'' },
-    p10: { id:'p10', name:'Birat',         color:8, from:'Sheffield',  transport:'bus',   cost:15, arrival:'13:00', picture:'' },
-    p11: { id:'p11', name:'Ishant',        color:3, from:'Liverpool',  transport:'train', cost:24, arrival:'12:30', picture:'' },
-    p12: { id:'p12', name:'Leila (maybe)', color:6, from:'Cardiff',    transport:'train', cost:20, arrival:'12:45', picture:'' }
+    // Formby is in Merseyside near Liverpool — distances reflect that.
+    p1:  { id:'p1',  name:'MJ',            color:5, from:'Stoke',      transport:'drive', cost:15, arrival:'10:30', picture:'' },
+    p2:  { id:'p2',  name:'Friend',        color:3, from:'Stoke',      transport:'drive', cost:3,  arrival:'10:30', picture:'' },
+    p3:  { id:'p3',  name:'Erika',         color:6, from:'Stoke',      transport:'drive', cost:3,  arrival:'10:30', picture:'' },
+    p4:  { id:'p4',  name:'Ringan',        color:7, from:'Coventry',   transport:'drive', cost:25, arrival:'11:00', picture:'' },
+    p5:  { id:'p5',  name:'Rhianon',       color:4, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:00', picture:'' },
+    p6:  { id:'p6',  name:'Liane',         color:1, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:00', picture:'' },
+    p7:  { id:'p7',  name:'Evi',           color:9, from:'Coventry',   transport:'drive', cost:5,  arrival:'11:00', picture:'' },
+    p8:  { id:'p8',  name:'Shad',          color:0, from:'Manchester', transport:'train', cost:10, arrival:'10:45', picture:'' },
+    p9:  { id:'p9',  name:'Ed',            color:2, from:'Birmingham', transport:'train', cost:25, arrival:'11:30', picture:'' },
+    p10: { id:'p10', name:'Birat',         color:8, from:'Sheffield',  transport:'train', cost:18, arrival:'11:30', picture:'' },
+    p11: { id:'p11', name:'Ishant',        color:3, from:'Liverpool',  transport:'train', cost:5,  arrival:'10:15', picture:'' },
+    p12: { id:'p12', name:'Leila (maybe)', color:6, from:'Cardiff',    transport:'train', cost:45, arrival:'13:00', picture:'' }
   },
   nextId: 13
 };
@@ -332,7 +333,9 @@ function loadState() {
       if (p.arrival == null)   p.arrival = '';
       if (p.picture == null)   p.picture = '';
     });
-    if (!parsed.beachName) parsed.beachName = 'Brighton Beach';
+    if (!parsed.beachName) parsed.beachName = 'Formby';
+    // One-time migration: rename old default if it was never customised
+    if (parsed.beachName === 'Brighton Beach') parsed.beachName = 'Formby';
     state = parsed;
   } catch {
     state = deepClone(DEFAULT_STATE);
