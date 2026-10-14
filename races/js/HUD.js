@@ -1,4 +1,5 @@
-import { TRACK } from './config.js?v=20261014';
+import {ROUTE,ROAD_WIDTH} from './Route.js?v=20261014b';
+import { TRACK } from './config.js?v=20261014b';
 
 export class HUD {
   constructor() {
@@ -91,7 +92,7 @@ export class HUD {
     const { innerR, outerR } = TRACK;
     const S   = 160;
     const CX  = S / 2, CY = S / 2;
-    const sc  = (S / 2 - 6) / outerR;
+    const sc  = (S / 2 - 10) / 240;
     const ctx = this.ctx;
 
     ctx.clearRect(0, 0, S, S);
@@ -104,26 +105,10 @@ export class HUD {
     ctx.fillStyle = 'rgba(5,5,18,0.88)';
     ctx.fillRect(0, 0, S, S);
 
-    // Track ring
-    ctx.beginPath();
-    ctx.arc(CX, CY, outerR * sc, 0, Math.PI * 2);
-    ctx.fillStyle = '#202020';
-    ctx.fill();
-
-    // Infield
-    ctx.beginPath();
-    ctx.arc(CX, CY, innerR * sc, 0, Math.PI * 2);
-    ctx.fillStyle = '#0B160B';
-    ctx.fill();
-
-    // Start line
-    ctx.beginPath();
-    ctx.moveTo(CX, CY - innerR * sc);
-    ctx.lineTo(CX, CY - outerR * sc);
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
+    // Draw the same course geometry used by physics, with world north up.
+    ctx.beginPath();ROUTE.forEach((p,i)=>{const x=CX+p.x*sc,y=CY-p.z*sc;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.strokeStyle='#777c7d';ctx.lineWidth=ROAD_WIDTH*sc;ctx.lineJoin='round';ctx.stroke();
+    ctx.strokeStyle='#e7ecea';ctx.lineWidth=1;ctx.stroke();
     // Car arrow
     const mx = CX + carPos.x * sc;
     const my = CY - carPos.z * sc;

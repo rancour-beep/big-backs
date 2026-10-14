@@ -3,8 +3,9 @@
 // Falls back silently to single-player if Firebase is unavailable.
 
 import * as THREE from 'three';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014';
-import { CAR_CONFIGS } from './config.js?v=20261014';
+import { projectRoute } from './Route.js?v=20261014b';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014b';
+import { CAR_CONFIGS } from './config.js?v=20261014b';
 
 // ── Is Firebase ready? ───────────────────────────────────────────────────────
 export function firebaseReady() {
@@ -133,6 +134,7 @@ export class GhostManager {
       }
       g.mesh.position.x = THREE.MathUtils.lerp(g.mesh.position.x, g.targetX, 8 * dt);
       g.mesh.position.z = THREE.MathUtils.lerp(g.mesh.position.z, g.targetZ, 8 * dt);
+      g.mesh.position.y = projectRoute(g.mesh.position).y;
       // Angle lerp (shortest path)
       let da = g.targetAngle - g.mesh.rotation.y;
       while (da >  Math.PI) da -= Math.PI * 2;

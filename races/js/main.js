@@ -1,17 +1,18 @@
 import * as THREE from 'three';
-import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js?v=20261014';
-import { createScene }                                  from './SceneSetup.js?v=20261014';
-import { buildTrack, updateLapProgress, initialLapState } from './Track.js?v=20261014';
-import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js?v=20261014';
-import { CarController, InputHandler }                  from './CarController.js?v=20261014';
-import { HUD }                                          from './HUD.js?v=20261014';
-import { Lobby }                                        from './Lobby.js?v=20261014';
-import { Garage, loadGarageSettings }                   from './Garage.js?v=20261014';
-import { GameAudio }                                    from './Audio.js?v=20261014';
+import {routeFrame,projectRoute,ROUTE_LENGTH,ROUTE} from './Route.js?v=20261014b';
+import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js?v=20261014b';
+import { createScene }                                  from './ScenicScene.js?v=20261014b';
+import { buildTrack, updateLapProgress, initialLapState } from './ScenicTrack.js?v=20261014b';
+import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js?v=20261014b';
+import { CarController, InputHandler }                  from './CarController.js?v=20261014b';
+import { HUD }                                          from './HUD.js?v=20261014b';
+import { Lobby }                                        from './Lobby.js?v=20261014b';
+import { Garage, loadGarageSettings }                   from './Garage.js?v=20261014b';
+import { GameAudio }                                    from './Audio.js?v=20261014b';
 import { firebaseReady, createRoom, joinRoom, registerPlayer,
          updatePlayerPos, markFinished, watchPlayers, watchCountdownEnd,
-         startCountdown, GhostManager }                 from './Firebase.js?v=20261014';
-import { spawnBots, computeRanking }                    from './AIBot.js?v=20261014';
+         startCountdown, GhostManager }                 from './Firebase.js?v=20261014b';
+import { spawnBots, computeRanking }                    from './AIBot.js?v=20261014b';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const S = { LOBBY:0, GARAGE:1, LOADING:2, COUNTDOWN:3, RACING:4, FINISHED:5 };
@@ -42,6 +43,18 @@ new Lobby(null, startLoading, (char) => {
   if (gBtn) { gBtn.disabled = false; gBtn.style.setProperty('--btn-color', char.hex); }
 });
 buildOnlineUI();
+const audioOptions = new GameAudio();
+const muteButton=document.getElementById('race-mute');
+function syncAudioUI(){muteButton.textContent=audioOptions.muted?'Sound off':'Sound on';muteButton.setAttribute('aria-pressed',String(audioOptions.muted));document.getElementById('race-volume').value=audioOptions.volume;}
+syncAudioUI();
+muteButton.addEventListener('click',()=>{audioOptions.setMuted(!audioOptions.muted);if(audio)audio.setMuted(audioOptions.muted);syncAudioUI();});
+document.getElementById('race-volume').addEventListener('input',e=>{audioOptions.setVolume(e.target.value);if(audio)audio.setVolume(e.target.value);});
+const qualitySelect=document.getElementById('race-quality');qualitySelect.value=localStorage.getItem('bbr_quality')||'high';
+qualitySelect.addEventListener('change',()=>{if(state!==S.LOBBY&&!confirm('Reload to change graphics? Current race progress will be lost.'))return;localStorage.setItem('bbr_quality',qualitySelect.value);location.reload();});
+document.getElementById('track-length').textContent=(ROUTE_LENGTH/1000).toFixed(2)+' km circuit';
+const svg=document.getElementById('route-preview');
+const outline=document.createElementNS('http://www.w3.org/2000/svg','polyline');outline.setAttribute('points',ROUTE.map(p=>p.x+','+(-p.z)).join(' '));outline.setAttribute('fill','none');outline.setAttribute('stroke','#dec58d');outline.setAttribute('stroke-width','12');outline.setAttribute('stroke-linejoin','round');svg.appendChild(outline);
+
 
 // ← LOBBY button (garage header) — goes back to lobby (saves garage settings)
 document.getElementById('lobby-back-btn').addEventListener('click', closeGarage);
@@ -58,6 +71,8 @@ document.getElementById('garage-back-btn').addEventListener('click', () => {
 // ← LOBBY button (in-game) — exit the race back to the lobby
 document.getElementById('exit-race-btn').addEventListener('click', exitRace);
 document.addEventListener('keydown', (e) => {
+  if (e.code === 'KeyR' && car && state === S.RACING) { const r=projectRoute(car.position); car.position.set(r.x,r.y,r.z); car.angle=r.angle; car.velocity.set(0,0,0); }
+  if (e.code === 'KeyM' && !e.target.closest?.('input,select,textarea')) document.getElementById('race-mute').click();
   if (e.key === 'Escape' && (state === S.COUNTDOWN || state === S.RACING || state === S.FINISHED)) {
     exitRace();
   }
@@ -179,8 +194,9 @@ async function startLoading(char) {
   smoke = buildSmokeSystem(sceneData.scene);
 
   await step(75, 'Warming tyres...');
-  const startPos = new THREE.Vector3(0, 0, TRACK.centerR);
-  car  = new CarController(cfg, startPos, Math.PI / 2);
+  const startFrame = routeFrame(0);
+  const startPos = startFrame.p.clone();
+  car  = new CarController(cfg, startPos, startFrame.angle);
   lapState  = initialLapState();
   input     = new InputHandler();
   audio     = new GameAudio();
@@ -206,7 +222,7 @@ async function startLoading(char) {
       neonColor:  garageSettings.neonColor,
       x:          startPos.x,
       z:          startPos.z,
-      angle:      Math.PI / 2,
+      angle:      startFrame.angle,
       lap:        1,
       speed:      0,
       finished:   false,
@@ -242,6 +258,7 @@ async function startLoading(char) {
 
   carMesh.position.copy(car.position);
   carMesh.rotation.y = car.angle;
+  carMesh.rotation.x = -Math.atan2(routeFrame(projectRoute(car.position).t).tangent.y, 1);
 
   switchScreen('game');
   hud.show();
@@ -310,6 +327,7 @@ function tickRace(dt) {
   // Sync mesh
   carMesh.position.copy(car.position);
   carMesh.rotation.y = car.angle;
+  carMesh.rotation.x = -Math.atan2(routeFrame(projectRoute(car.position).t).tangent.y, 1);
 
   // Wheel animation — baked geometry means rotation.x = world X spin
   if (carMesh.wheels) {

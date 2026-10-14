@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { TRACK } from './config.js?v=20261014';
+import {projectRoute,ROAD_WIDTH} from './Route.js?v=20261014b';
+import { TRACK } from './config.js?v=20261014b';
 
 export class CarController {
   constructor(carCfg, startPos, startAngle) {
@@ -102,31 +103,9 @@ export class CarController {
   }
 
   resolveWalls() {
-    const { innerR, outerR } = TRACK;
-    const carW = this.cfg.bW / 2 + 0.2;
-    const dist = Math.sqrt(this.position.x ** 2 + this.position.z ** 2);
-    const nx = this.position.x / dist;
-    const nz = this.position.z / dist;
-
-    if (dist > outerR - carW) {
-      this.position.x = nx * (outerR - carW);
-      this.position.z = nz * (outerR - carW);
-      // Bounce / kill radial velocity
-      const radialV = this.velocity.x * nx + this.velocity.z * nz;
-      if (radialV > 0) {
-        this.velocity.x -= radialV * nx * 1.4;
-        this.velocity.z -= radialV * nz * 1.4;
-      }
-    }
-    if (dist < innerR + carW) {
-      this.position.x = nx * (innerR + carW);
-      this.position.z = nz * (innerR + carW);
-      const radialV = this.velocity.x * nx + this.velocity.z * nz;
-      if (radialV < 0) {
-        this.velocity.x -= radialV * nx * 1.4;
-        this.velocity.z -= radialV * nz * 1.4;
-      }
-    }
+    const r=projectRoute(this.position),limit=ROAD_WIDTH/2-this.cfg.bW/2-.25;
+    if(Math.abs(r.offset)>limit){const side=Math.sign(r.offset);this.position.x=r.x+r.nx*side*limit;this.position.z=r.z+r.nz*side*limit;const outward=this.velocity.x*r.nx+this.velocity.z*r.nz;if(outward*side>0){this.velocity.x-=outward*r.nx*1.15;this.velocity.z-=outward*r.nz*1.15;}this.velocity.multiplyScalar(.96);}
+    this.position.y=r.y;
   }
 
   speedMPH() { return this.speed * 2.237; }
@@ -136,7 +115,8 @@ export class CarController {
 export class InputHandler {
   constructor() {
     this.keys = {};
-    window.addEventListener('keydown', e => { this.keys[e.code] = true; e.preventDefault && ['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code) && e.preventDefault(); });
+    window.addEventListener('keydown', e => { if(e.target.closest?.('input,select,textarea'))return; this.keys[e.code] = true; e.preventDefault && ['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code) && e.preventDefault(); });
+    window.addEventListener('blur', () => { this.keys = {}; });
     window.addEventListener('keyup',   e => { this.keys[e.code] = false; });
 
     // Touch buttons
@@ -152,6 +132,7 @@ export class InputHandler {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('touchstart', () => { this.keys['touch_' + action] = true; }, { passive:true });
+    el.addEventListener('touchcancel', () => { this.keys['touch_' + action] = false; });
     el.addEventListener('touchend',   () => { this.keys['touch_' + action] = false; });
   }
 

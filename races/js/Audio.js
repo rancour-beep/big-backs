@@ -8,6 +8,8 @@ export class GameAudio {
     this.nosGain = null;
     this.masterGain = null;
     this.ready = false;
+    this.muted = localStorage.getItem('bigbacks_race_muted') !== '0';
+    this.volume = Math.min(.3, Math.max(0,Number(localStorage.getItem('bigbacks_race_volume') || .12)));
   }
 
   init() {
@@ -16,7 +18,7 @@ export class GameAudio {
       const AC = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AC();
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.value = 0.5;
+      this.masterGain.gain.value = this.muted ? 0 : this.volume;
       this.masterGain.connect(this.ctx.destination);
 
       // ── Engine oscillator ──
@@ -27,7 +29,7 @@ export class GameAudio {
       this.engineGain = this.ctx.createGain();
       this.engineGain.gain.value = 0;
       this.engineOsc = this.ctx.createOscillator();
-      this.engineOsc.type = 'sawtooth';
+      this.engineOsc.type = 'triangle';
       this.engineOsc.frequency.value = 60;
       this.engineOsc.connect(lp).connect(this.engineGain).connect(this.masterGain);
       this.engineOsc.start();
@@ -42,7 +44,7 @@ export class GameAudio {
 
       const bp = this.ctx.createBiquadFilter();
       bp.type = 'bandpass';
-      bp.frequency.value = 3000;
+      bp.frequency.value = 750;
       bp.Q.value = 1.5;
 
       this.squeaGain = this.ctx.createGain();
@@ -58,8 +60,8 @@ export class GameAudio {
       nosNoise.buffer = nosHpBuf;
       nosNoise.loop = true;
       const nosHp = this.ctx.createBiquadFilter();
-      nosHp.type = 'highpass';
-      nosHp.frequency.value = 6000;
+      nosHp.type = 'lowpass';
+      nosHp.frequency.value = 900;
       this.nosGain = this.ctx.createGain();
       this.nosGain.gain.value = 0;
       nosNoise.connect(nosHp).connect(this.nosGain).connect(this.masterGain);
@@ -71,13 +73,16 @@ export class GameAudio {
     }
   }
 
-  beep(freq, dur, vol = 0.3) {
+  setMuted(value) { this.muted=value;localStorage.setItem('bigbacks_race_muted',value?'1':'0');this.applyVolume(); }
+  setVolume(value) { this.volume=Math.max(0,Math.min(.3,Number(value)||0));localStorage.setItem('bigbacks_race_volume',this.volume);this.applyVolume(); }
+  applyVolume() { if(this.ready)this.masterGain.gain.setTargetAtTime(this.muted?0:this.volume,this.ctx.currentTime,.08); }
+  beep(freq, dur, vol = 0.12) {
     if (!this.ready) return;
     const o = this.ctx.createOscillator();
     const g = this.ctx.createGain();
     o.frequency.value = freq;
     o.type = 'sine';
-    g.gain.setValueAtTime(vol, this.ctx.currentTime);
+    g.gain.setValueAtTime(Math.min(.12,vol), this.ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
     o.connect(g).connect(this.masterGain);
     o.start();
@@ -99,11 +104,11 @@ export class GameAudio {
     this.engineGain.gain.setTargetAtTime(0.08 + t * 0.1, this.ctx.currentTime, 0.05);
 
     // Squeal when drifting
-    const targetSqueal = isDrifting && speed > 5 ? 0.18 : 0;
+    const targetSqueal = isDrifting && speed > 5 ? 0.03 : 0;
     this.squeaGain.gain.setTargetAtTime(targetSqueal, this.ctx.currentTime, 0.1);
 
     // NOS hiss
-    this.nosGain.gain.setTargetAtTime(nosActive ? 0.15 : 0, this.ctx.currentTime, 0.05);
+    this.nosGain.gain.setTargetAtTime(nosActive ? 0.025 : 0, this.ctx.currentTime, 0.05);
   }
 
   finishFanfare() {

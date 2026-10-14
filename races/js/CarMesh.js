@@ -1,18 +1,29 @@
 import * as THREE from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// A tapered silhouette replaces the toy-like rectangular shell.
+function coachwork(w,h,l,cabin=false){
+  const sections=cabin?[[-.5,.78,-.30],[-.27,.9,.50],[.15,.9,.50],[.5,.75,-.36]]:[[-.5,.88,.03],[-.36,.98,.36],[-.1,1,.5],[.25,.97,.30],[.5,.8,-.12]];
+  const positions=[],indices=[];
+  for(const [z,width,top] of sections){const x=w*width/2;positions.push(-x,-h/2,z*l,x,-h/2,z*l,x*.92,top*h,z*l,-x*.92,top*h,z*l);}
+  for(let i=0;i<sections.length-1;i++)for(let j=0;j<4;j++){const a=i*4+j,b=i*4+(j+1)%4,c=a+4,d=b+4;indices.push(a,b,c,b,d,c);}
+  indices.push(0,2,1,0,3,2);const e=(sections.length-1)*4;indices.push(e,e+1,e+2,e,e+2,e+3);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setIndex(indices);g.computeVertexNormals();return g;
+}
 
 export function buildCarMesh(cfg, hexColor) {
   const group = new THREE.Group();
   const color = new THREE.Color(hexColor);
 
   // ── Materials ──────────────────────────────────────────────────────────────
-  const bodyMat = new THREE.MeshStandardMaterial({ color, metalness:0.9, roughness:0.15 });
-  const glassMat = new THREE.MeshStandardMaterial({ color:0x88CCFF, metalness:0.1, roughness:0.05, transparent:true, opacity:0.5 });
+  const bodyMat = new THREE.MeshPhysicalMaterial({color,metalness:.62,roughness:.23,clearcoat:1,clearcoatRoughness:.12});
+  const glassMat = new THREE.MeshStandardMaterial({ color:0x263943, metalness:0.2, roughness:0.18, transparent:true, opacity:0.9 });
   const tireMat  = new THREE.MeshStandardMaterial({ color:0x111111, metalness:0, roughness:0.95 });
   const rimMat   = new THREE.MeshStandardMaterial({ color:0xCCCCCC, metalness:0.9, roughness:0.1 });
   const darkMat  = new THREE.MeshStandardMaterial({ color:0x0D0D0D, metalness:0.3, roughness:0.7 });
-  const headMat  = new THREE.MeshStandardMaterial({ color:0xFFFFEE, emissive:0xFFFFCC, emissiveIntensity:4 });
-  const tailMat  = new THREE.MeshStandardMaterial({ color:0xFF0000, emissive:0xFF2200, emissiveIntensity:5 });
-  const neonMat  = new THREE.MeshStandardMaterial({ color:hexColor, emissive:hexColor, emissiveIntensity:2.2, transparent:true, opacity:0.88 });
+  const headMat  = new THREE.MeshStandardMaterial({ color:0xFFFFEE, emissive:0xFFFFCC, emissiveIntensity:.7 });
+  const tailMat  = new THREE.MeshStandardMaterial({ color:0xFF0000, emissive:0xFF2200, emissiveIntensity:.8 });
+  const neonMat  = new THREE.MeshStandardMaterial({ color:hexColor, emissive:hexColor, emissiveIntensity:.15, transparent:true, opacity:0.88 });
 
   const { bL, bW, bH, rL, rW, rH, wheelR, wheelW } = cfg;
 
@@ -42,24 +53,24 @@ export function buildCarMesh(cfg, hexColor) {
   const cabinY = wheelR + bH + rH * 0.5;
 
   // Main body
-  group.bodyMesh = addBody(new THREE.BoxGeometry(bW, bH, bL), bodyY);
+  group.bodyMesh = addBody(coachwork(bW,bH,bL), bodyY);
 
   // Front bumper taper
-  const frontBumper = new THREE.Mesh(new THREE.BoxGeometry(bW * 0.9, bH * 0.6, 0.4), bodyMat);
+  const frontBumper = new THREE.Mesh(new RoundedBoxGeometry(bW*.85,bH*.38,.3,2,.05), bodyMat);
   frontBumper.position.set(0, wheelR + bH * 0.3, bL * 0.5 + 0.18);
   frontBumper.castShadow = true;
   group.add(frontBumper);
   group.bodyMeshes.push(frontBumper);
 
   // Rear bumper
-  const rearBumper = new THREE.Mesh(new THREE.BoxGeometry(bW * 0.88, bH * 0.6, 0.4), bodyMat);
+  const rearBumper = new THREE.Mesh(new RoundedBoxGeometry(bW*.87,bH*.38,.3,2,.05), bodyMat);
   rearBumper.position.set(0, wheelR + bH * 0.3, -bL * 0.5 - 0.18);
   rearBumper.castShadow = true;
   group.add(rearBumper);
   group.bodyMeshes.push(rearBumper);
 
   // Cabin / roof
-  addBody(new THREE.BoxGeometry(rW, rH, rL), cabinY, 0.04 * bL);
+  addBody(coachwork(rW,rH,rL,true), cabinY, 0.04 * bL);
 
   // Side skirts
   [-1, 1].forEach(side => {
@@ -72,11 +83,11 @@ export function buildCarMesh(cfg, hexColor) {
 
   // ── Glass ──────────────────────────────────────────────────────────────────
   [
-    { z: rL * 0.5,  tiltX: -0.18 },
-    { z: -rL * 0.5, tiltX:  0.18 },
+    { z: rL * 0.5,  tiltX: -0.63 },
+    { z: -rL * 0.5, tiltX:  0.61 },
   ].forEach(({ z, tiltX }) => {
     const win = new THREE.Mesh(new THREE.BoxGeometry(rW - 0.18, rH * 0.7, 0.06), glassMat);
-    win.position.set(0, cabinY, z);
+    win.position.set(0, cabinY-.05, z*.77+0.04*bL);
     win.rotation.x = tiltX;
     group.add(win);
   });
@@ -113,7 +124,7 @@ export function buildCarMesh(cfg, hexColor) {
   // Bake horizontal orientation into geometry so rotation.x = spin, rotation.y = steer
   const tirGeo = new THREE.CylinderGeometry(wheelR, wheelR, wheelW, 22);
   tirGeo.rotateZ(Math.PI / 2);   // cylinder axis → world X
-  const rimGeo = new THREE.CylinderGeometry(wheelR * 0.58, wheelR * 0.58, wheelW + 0.02, 12);
+  const rimGeo = new THREE.CylinderGeometry(wheelR * 0.74, wheelR * 0.74, wheelW + 0.02, 32);
   rimGeo.rotateZ(Math.PI / 2);
   const hubGeo = new THREE.CylinderGeometry(wheelR * 0.2, wheelR * 0.2, wheelW + 0.06, 8);
   hubGeo.rotateZ(Math.PI / 2);
@@ -140,6 +151,8 @@ export function buildCarMesh(cfg, hexColor) {
     const brake = new THREE.Mesh(brakeGeo, new THREE.MeshStandardMaterial({ color:0x883300, metalness:0.6, roughness:0.5 }));
     tire.castShadow = rim.castShadow = true;
     wg.add(tire, rim, hub, brake);
+    for(let i=0;i<5;i++){const angle=i*Math.PI*2/5,spoke=new THREE.Mesh(new THREE.BoxGeometry(.05,wheelR*1.1,.045),rimMat);spoke.rotation.x=angle;spoke.position.x=Math.sign(wp.x)*(wheelW/2+.025);wg.add(spoke);}
+    const inlet=new THREE.Mesh(new THREE.BoxGeometry(.15,.17,.8),darkMat);inlet.position.set(Math.sign(wp.x)*bW*.48,wheelR+bH*.25,-bL*.13);group.add(inlet);
     group.add(wg);
     group.wheels.push(wg);
     group.rimMeshes.push(rim);

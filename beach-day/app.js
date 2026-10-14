@@ -83,12 +83,13 @@ const PRIMARY_CURRENCIES = ['USD', 'EUR', 'NPR', 'PHP', 'BDT', 'HKD', 'MYR', 'IN
 // No files, no copyright, just synthesised pentatonic notes (Minecraft-vibe).
 const AUDIO_MUTE_KEY = 'bigbacks_audio_muted';
 const AUDIO_VOL_KEY  = 'bigbacks_audio_volume';
+if (!localStorage.getItem('bigbacks_audio_comfort_v2')) { localStorage.setItem(AUDIO_MUTE_KEY,'1'); localStorage.setItem(AUDIO_VOL_KEY,'0.12'); localStorage.setItem('bigbacks_audio_comfort_v2','1'); }
 
 const SoundKit = (() => {
   let ctx = null, masterGain = null, musicGain = null, sfxGain = null;
   let melodyTimer = null, padTimer = null;
   let muted = localStorage.getItem(AUDIO_MUTE_KEY) === '1';
-  let volume = parseFloat(localStorage.getItem(AUDIO_VOL_KEY) ?? '0.4');
+  let volume = parseFloat(localStorage.getItem(AUDIO_VOL_KEY) ?? '0.12');
   let initialized = false;
 
   function init() {
@@ -101,7 +102,7 @@ const SoundKit = (() => {
       masterGain.gain.value = muted ? 0 : volume;
       masterGain.connect(ctx.destination);
       musicGain = ctx.createGain();
-      musicGain.gain.value = 0.6;
+      musicGain.gain.value = 0;
       // Soft lowpass for warmth
       const lp = ctx.createBiquadFilter();
       lp.type = 'lowpass';
@@ -110,7 +111,7 @@ const SoundKit = (() => {
       musicGain.connect(lp);
       lp.connect(masterGain);
       sfxGain = ctx.createGain();
-      sfxGain.gain.value = 1;
+      sfxGain.gain.value = 0.22;
       sfxGain.connect(masterGain);
       initialized = true;
       if (!muted) startMusic();

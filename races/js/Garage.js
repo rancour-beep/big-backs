@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014';
-import { CAR_CONFIGS, CAR_TYPES, CHARACTERS }  from './config.js?v=20261014';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014b';
+import { CAR_CONFIGS, CAR_TYPES, CHARACTERS }  from './config.js?v=20261014b';
 
 const GARAGE_KEY = 'bigbacks_garage_v1';
 

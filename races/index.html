@@ -7,16 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261014" />
-  <link rel="stylesheet" href="pixel-cute.css?v=20261014" />
-  <script src="shared-profile.js?v=20261014"></script>
+  <link rel="stylesheet" href="style.css?v=20261014b" />
+  <link rel="stylesheet" href="pixel-cute.css?v=20261014b" />
+  <script src="shared-profile.js?v=20261014b"></script>
 
   <!-- ── Firebase (optional – for multiplayer) ──────────────────────────────
        Configure firebase-config.js to enable multiplayer. -->
 
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
-  <script src="firebase-config.js?v=20261014"></script>
+  <script src="firebase-config.js?v=20261014b"></script>
 
 
   <script type="importmap">
@@ -27,8 +27,14 @@
     }
   }
   </script>
+  <link rel="stylesheet" href="visual-upgrade.css?v=20261014b" />
 </head>
 <body>
+<div class="race-tools" aria-label="Audio and graphics">
+ <button id="race-mute" aria-pressed="true">Sound off</button>
+ <label for="race-volume">Volume</label><input id="race-volume" type="range" min="0" max="0.3" step="0.01" value="0.12" aria-label="Sound volume" />
+ <label class="quality-label" for="race-quality">Graphics quality</label><select id="race-quality"><option value="high">High</option><option value="low">Smooth</option></select>
+</div>
 
 <!-- ══════════════════ LOBBY ══════════════════ -->
 <div id="lobby" class="screen active">
@@ -44,7 +50,10 @@
       <div class="lh-sub">CHOOSE YOUR DRIVER · PICK YOUR LINE · LEAVE THEM IN THE DUST</div>
     </header>
 
-    <div class="lobby-body">
+    <section class="track-brief">
+ <div><span class="track-kicker">New mountain circuit</span><h2>SUMMIT RUN</h2><p>Chase the racing line through forest esses, fast sweepers and a climbing ridge. Natural daylight, detailed asphalt, and a calmer drive.</p><div class="track-stats"><span id="track-length">Mountain circuit</span><span>3 laps</span><span>R · recover car</span><span>M · mute</span></div></div>
+ <svg id="route-preview" class="route-preview" viewBox="-250 -250 500 500" aria-label="Summit Run circuit map"></svg>
+</section><div class="lobby-body">
       <div class="char-grid" id="char-grid"></div>
 
       <aside class="sel-panel">
@@ -167,6 +176,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=20261014"></script>
+<script type="module" src="js/main.js?v=20261014b"></script>
 </body>
 </html>

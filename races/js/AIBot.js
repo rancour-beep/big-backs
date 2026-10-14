@@ -2,10 +2,11 @@
 // Waypoint-following bots that drive around the oval — each bot inherits a
 // "personality" from the character stats: top speed, drift tendency, NOS use.
 import * as THREE from 'three';
-import { CarController }                       from './CarController.js?v=20261014';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014';
-import { TRACK, CHARACTERS, CAR_CONFIGS }      from './config.js?v=20261014';
-import { initialLapState, updateLapProgress }  from './Track.js?v=20261014';
+import {routeFrame,projectRoute,ROUTE_LENGTH} from './Route.js?v=20261014b';
+import { CarController }                       from './CarController.js?v=20261014b';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014b';
+import { TRACK, CHARACTERS, CAR_CONFIGS }      from './config.js?v=20261014b';
+import { initialLapState, updateLapProgress }  from './ScenicTrack.js?v=20261014b';
 
 const WORLD_X = new THREE.Vector3(1, 0, 0);
 
@@ -23,8 +24,9 @@ export class AIBot {
     // Start position — staggered behind player on the start line
     const lateralOffset = (startOffset % 2 === 0 ? -1 : 1) * 1.6;
     const back           = 2.5 + (startOffset * 1.4);
-    const startPos = new THREE.Vector3(lateralOffset, 0, TRACK.centerR + back);
-    this.controller = new CarController(this.cfg, startPos, Math.PI / 2);
+    const f=routeFrame(1-(startOffset+1)*7/ROUTE_LENGTH);
+    const startPos=f.p.clone().addScaledVector(f.normal,lateralOffset);
+    this.controller = new CarController(this.cfg,startPos,f.angle);
     this.controller.frozen = true;
 
     // Visual mesh
@@ -84,16 +86,9 @@ export class AIBot {
     const speed  = this.controller.speed;
     const cfg    = this.cfg;
 
-    // Look ahead along the oval centerline (clockwise = increasing atan2(x,z))
-    const here   = Math.atan2(pos.x, pos.z);
-    const lookM  = 16 + speed * 0.35;
-    const aheadΔ = lookM / TRACK.centerR;
-    const goal   = here + aheadΔ;
-
-    // Racing line: cut slightly to inner radius on tight sections (cosmetic)
-    const lineR  = TRACK.centerR - Math.sin(goal * 2) * 4;
-    const tx     = Math.sin(goal) * lineR;
-    const tz     = Math.cos(goal) * lineR;
+    const here=projectRoute(pos).t;
+    const f=routeFrame(here+(10+speed*.42)/ROUTE_LENGTH);
+    const tx=f.p.x,tz=f.p.z;
 
     // Steer toward target point
     const dx     = tx - pos.x;
@@ -135,7 +130,7 @@ export class AIBot {
 
   // Total race progress (used for live leaderboard position)
   progress() {
-    const a = Math.atan2(this.controller.position.x, this.controller.position.z);
+    const a = projectRoute(this.controller.position).t*Math.PI*2;
     const norm = ((a) + Math.PI * 2) % (Math.PI * 2);
     return (this.lapState.lap - 1) * (Math.PI * 2) + norm;
   }
@@ -159,7 +154,7 @@ export function computeRanking(player, playerLapState, raceTime, bots) {
   const all = [
     {
       name: 'YOU',
-      progress: ((Math.atan2(player.position.x, player.position.z) + Math.PI * 2) % (Math.PI * 2))
+      progress: ((projectRoute(player.position).t*Math.PI*2 + Math.PI * 2) % (Math.PI * 2))
                 + (playerLapState.lap - 1) * Math.PI * 2,
       finished: false,
       finishTime: 0,
