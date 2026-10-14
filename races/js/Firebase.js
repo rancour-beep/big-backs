@@ -2,6 +2,7 @@
 // Works only when window.FIRE is populated (from firebase-config.js).
 // Falls back silently to single-player if Firebase is unavailable.
 
+import * as THREE from 'three';
 import { buildCarMesh, applyCarCustomization } from './CarMesh.js';
 import { CAR_CONFIGS } from './config.js';
 
@@ -11,7 +12,7 @@ export function firebaseReady() {
     typeof firebase !== 'undefined' &&
     typeof window.FIRE !== 'undefined' &&
     window.FIRE.apiKey &&
-    window.FIRE.apiKey !== 'PASTE_YOUR_API_KEY'
+    window.FIRE.apiKey !== 'PASTE_YOUR_API_KEY' && firebase.apps.length > 0
   );
 }
 

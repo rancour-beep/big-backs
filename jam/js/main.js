@@ -28,6 +28,7 @@ const toast = (msg, type = 'info') => {
 window.addEventListener('DOMContentLoaded', boot);
 
 async function boot() {
+  wireGlobalListeners();
   $('app-version').textContent = `v${APP_VERSION} · by ${APP_CREATOR}`;
 
   if (!Auth.isConfigured()) {
@@ -46,16 +47,22 @@ async function boot() {
     toast(e.message, 'error');
   }
 
+  if (!Auth.isLoggedIn()) await Auth.refresh().catch(() => false);
   if (Auth.isLoggedIn()) {
     await loadUserAndShowHub();
   } else {
     show('welcome');
   }
 
-  wireGlobalListeners();
 }
 
 function wireGlobalListeners() {
+  $('setup-redirect').textContent = new URL('.', location.href).href;
+  $('setup-save').addEventListener('click', () => {
+    const id = $('setup-client-id').value.trim();
+    if (!/^[a-f0-9]{32}$/i.test(id)) { toast('Enter a valid 32-character Client ID', 'error'); return; }
+    localStorage.setItem('bbj_client_id', id); location.reload();
+  });
   $('btn-login').addEventListener('click', () => {
     Auth.login().catch(e => toast(e.message, 'error'));
   });

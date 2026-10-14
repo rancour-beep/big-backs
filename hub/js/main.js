@@ -4,17 +4,7 @@ const IS_DEPLOYED = location.hostname.endsWith('.github.io') ||
                     location.hostname.endsWith('.netlify.app') ||
                     location.hostname.endsWith('.vercel.app');
 
-const DEFAULT_PATHS = IS_DEPLOYED
-  ? {  // Production monorepo layout (recommended)
-      beachDay: '../beach-day/',
-      races:    '../races/',
-      jam:      '../jam/',
-    }
-  : {  // Local dev (folder names with spaces)
-      beachDay: '../big backs beach day/',
-      races:    '../Big Backs Races/',
-      jam:      '../Big Backs Jam/',
-    };
+const DEFAULT_PATHS = { beachDay: '../beach-day/', races: '../races/', jam: '../jam/' };
 
 // ─── App registry ──────────────────────────────────────────────────────────
 const APPS = [
@@ -26,7 +16,7 @@ const APPS = [
     color2:'#C8A4B5',
     desc:  'Carpool, costs, currencies, group chat',
     path:  DEFAULT_PATHS.beachDay,
-    statLabel: (s) => `${s.peopleCount || 12} in the carpool · £${(s.totalCost || 179).toFixed(0)} total`,
+    statLabel: (s) => `${s.peopleCount ?? 12} in the carpool · £${(s.totalCost ?? 179).toFixed(0)} total`,
   },
   {
     key:   'races',
@@ -140,7 +130,7 @@ function renderApps() {
           <span class="ac-name">${app.name}</span>
         </div>
         <div class="ac-desc">${app.desc}</div>
-        <div class="ac-stats">${app.statLabel(stats)}</div>
+        <div class="ac-stats">${esc(app.statLabel(stats))}</div>
         <div class="ac-open">
           <span>OPEN</span>
           <span class="ac-arrow">→</span>
@@ -174,7 +164,7 @@ function renderActivity() {
   wrap.innerHTML = events.map(ev => {
     const meta  = ACTIVITY_LABELS[ev.app] || ACTIVITY_LABELS.hub;
     const renderer = meta.events[ev.event];
-    const text  = renderer ? renderer(ev.data || {}) : `did <b>${ev.event}</b>`;
+    const text  = renderer ? renderer(Object.fromEntries(Object.entries(ev.data || {}).map(([k,v]) => [k, typeof v === 'string' ? esc(v) : v]))) : `did <b>${esc(ev.event)}</b>`;
     return `
       <div class="feed-row">
         <span class="fr-icon" style="background:${meta.color}20;color:${meta.color}">${meta.icon}</span>

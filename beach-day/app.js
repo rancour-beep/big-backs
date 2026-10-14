@@ -346,6 +346,7 @@ function loadState() {
 function saveState() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(state));
+    window.BigBacks?.stats.update('beachDay', { peopleCount: Object.keys(state.people).length, totalCost: totalCost() });
     return true;
   } catch (err) {
     if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
@@ -1549,6 +1550,7 @@ const Chat = (() => {
     } catch {}
     if (urlKey)  { apiKey = urlKey.trim();  localStorage.setItem(CHAT_KEY_KEY, apiKey); }
     else         { apiKey = localStorage.getItem(CHAT_KEY_KEY) || ''; }
+    if (urlKey) { const clean = new URL(location.href); clean.searchParams.delete('key'); history.replaceState({}, '', clean); }
     if (urlRoom) { roomId = urlRoom.trim(); localStorage.setItem(CHAT_ROOM_KEY, roomId); }
     else         { roomId = localStorage.getItem(CHAT_ROOM_KEY) || ''; }
   }
@@ -1563,7 +1565,7 @@ const Chat = (() => {
     try {
       const url = new URL(window.location.href);
       if (id)     url.searchParams.set('room', id);   else url.searchParams.delete('room');
-      if (apiKey) url.searchParams.set('key', apiKey); else url.searchParams.delete('key');
+      url.searchParams.delete('key');
       window.history.replaceState({}, '', url.toString());
     } catch {}
   }
@@ -1573,12 +1575,12 @@ const Chat = (() => {
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('room', roomId);
-      if (apiKey) url.searchParams.set('key', apiKey);
+      url.searchParams.delete('key');
       url.hash = '';
       return url.toString();
     } catch {
       const base = window.location.href.split('?')[0];
-      return base + '?room=' + roomId + (apiKey ? '&key=' + apiKey : '');
+      return base + '?room=' + encodeURIComponent(roomId);
     }
   }
 
@@ -2066,7 +2068,7 @@ const Chat = (() => {
       body.appendChild(share);
 
       const tip = el('div', 'room-tip');
-      tip.textContent = 'Anyone with the link can join. Metthageth poll every 4 thecondth ♡';
+      tip.textContent = 'Each participant needs their own JSONbin key with access to this room. Metthageth poll every 4 thecondth ♡';
       body.appendChild(tip);
 
       const leaveSection = el('div', 'room-section');

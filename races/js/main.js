@@ -19,6 +19,8 @@ let state = S.LOBBY;
 
 let sceneData, car, carMesh, smoke, audio, hud, lapState, input;
 let ghosts = null;
+let remotePlayers = {};
+let countdownEnd = 0;
 let bots = [];
 let myPlace = 1;
 let raceTime = 0, lastTs = 0;
@@ -90,7 +92,8 @@ function buildOnlineUI() {
     <div class="op-status" id="op-status"></div>
   `;
   document.getElementById('op-create').addEventListener('click', async () => {
-    const id = await createRoom();
+    let id;
+    try { id = await createRoom(); } catch (e) { document.getElementById('op-status').textContent = 'Could not create room: ' + e.message; return; }
     roomId = id; isHost = true;
     const url = `${location.origin}${location.pathname}?room=${id}`;
     document.getElementById('op-status').innerHTML = `Room: <strong>${id}</strong> <button onclick="navigator.clipboard.writeText('${url}').then(()=>{})" class="op-copy-btn">📋 Copy Link</button>`;
@@ -109,8 +112,7 @@ function buildOnlineUI() {
 
   // Auto-join from URL
   if (urlRoom && firebaseReady()) {
-    roomId = urlRoom; isHost = false;
-    document.getElementById('op-status').textContent = `Auto-joined room ${urlRoom}`;
+    joinRoom(urlRoom).then(() => { roomId = urlRoom; isHost = false; document.getElementById('op-status').textContent = `Joined room ${urlRoom}`; }).catch(() => { document.getElementById('op-status').textContent = 'Room not found'; });
   }
 }
 
@@ -215,10 +217,12 @@ async function startLoading(char) {
 
     // Watch other players
     watchPlayers(roomId, (data) => {
-      if (ghosts && state >= S.RACING) ghosts.update(data, 0);
+      remotePlayers = data;
       updateOnlineLeaderboard(data);
     });
 
+    // All players use the same server countdown timestamp.
+    watchCountdownEnd(roomId, endTs => { countdownEnd = endTs || 0; });
     // Host starts race; others sync countdown via Firebase
     if (isHost) {
       setTimeout(() => startCountdown(roomId), 500);
@@ -268,6 +272,14 @@ function loop(ts) {
 
 // ─── Countdown ────────────────────────────────────────────────────────────
 function tickCountdown(dt) {
+  if (roomId) {
+    if (!countdownEnd) return;
+    const remaining = countdownEnd - Date.now();
+    const next = Math.max(0, Math.ceil(remaining / 1000));
+    if (next !== cdVal) { cdVal = next; hud.showCountdown(next ? String(next) : 'GO! 🏁'); audio.countdown(next); }
+    if (remaining <= 0) { state = S.RACING; car.frozen = false; raceTime = 0; bots.forEach(b => b.start()); hud.showCountdown(''); }
+    return;
+  }
   // Orbit camera for cinematic look
   const t = Date.now() / 4200;
   const cx = Math.sin(t) * 12, cz = Math.cos(t) * 12;
@@ -349,7 +361,7 @@ function tickRace(dt) {
   }
 
   // Ghost car interpolation
-  if (ghosts) ghosts.update({}, dt); // positions updated by watchPlayers listener
+  if (ghosts) ghosts.update(remotePlayers, dt); // positions updated by watchPlayers listener
 
   // Send position to Firebase (every ~80 ms)
   if (roomId && myPlayerId && firebaseReady()) {

@@ -15,7 +15,7 @@
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CLIENT_ID = 'PASTE_YOUR_SPOTIFY_CLIENT_ID_HERE';
+export const CLIENT_ID = localStorage.getItem('bbj_client_id') || 'PASTE_YOUR_SPOTIFY_CLIENT_ID_HERE';
 
 // REDIRECT_URI is auto-detected from window.location so it works on both
 // localhost and GitHub Pages without changing this file. Both URIs MUST be

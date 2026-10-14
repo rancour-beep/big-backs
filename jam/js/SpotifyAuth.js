@@ -42,10 +42,13 @@ export function getAccessToken() {
 }
 
 export async function login() {
-  if (!isConfigured()) throw new Error('Set CLIENT_ID in js/config.js first.');
+  if (!isConfigured()) throw new Error('Add your Spotify Client ID above first.');
   const verifier  = randomString(64);
   const challenge = await codeChallengeFor(verifier);
-  localStorage.setItem(LS.CODE_VERIFIER, verifier);
+  sessionStorage.setItem(LS.CODE_VERIFIER, verifier);
+  sessionStorage.setItem('bbj_auth_state', randomString(32));
+  const jam = new URLSearchParams(location.search).get('jam');
+  if (jam) sessionStorage.setItem('bbj_pending_jam', jam);
 
   const params = new URLSearchParams({
     client_id:             CLIENT_ID,
@@ -54,6 +57,7 @@ export async function login() {
     code_challenge_method: 'S256',
     code_challenge:        challenge,
     scope:                 SCOPES,
+    state:                 sessionStorage.getItem('bbj_auth_state'),
   });
   window.location.assign(`${AUTH_BASE}?${params}`);
 }
@@ -65,7 +69,9 @@ export async function handleCallback() {
   if (err)  throw new Error('Spotify auth failed: ' + err);
   if (!code) return false;
 
-  const verifier = localStorage.getItem(LS.CODE_VERIFIER);
+  const expected = sessionStorage.getItem('bbj_auth_state');
+  if (!expected || sp.get('state') !== expected) throw new Error('Invalid login response — reconnect to Spotify.');
+  const verifier = sessionStorage.getItem(LS.CODE_VERIFIER);
   if (!verifier) throw new Error('Missing PKCE verifier — try logging in again.');
 
   const res = await fetch(TOKEN_URL, {
@@ -85,11 +91,15 @@ export async function handleCallback() {
   localStorage.setItem(LS.TOKEN, access_token);
   if (refresh_token) localStorage.setItem(LS.REFRESH, refresh_token);
   localStorage.setItem(LS.EXPIRES, Date.now() + expires_in * 1000);
-  localStorage.removeItem(LS.CODE_VERIFIER);
+  sessionStorage.removeItem(LS.CODE_VERIFIER);
+  sessionStorage.removeItem('bbj_auth_state');
 
   // Strip ?code= from URL so a refresh doesn't try to re-exchange
   const clean = new URL(window.location.href);
   clean.search = ''; clean.hash = '';
+  const jam = sessionStorage.getItem('bbj_pending_jam');
+  if (jam) clean.searchParams.set('jam', jam);
+  sessionStorage.removeItem('bbj_pending_jam');
   window.history.replaceState({}, '', clean.toString());
   return true;
 }

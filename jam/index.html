@@ -28,7 +28,13 @@
     </div>
 
     <div id="setup-warning" class="setup-warning" hidden>
-      <strong>⚠ Setup needed:</strong> open <code>js/config.js</code> and paste your Spotify Client ID. Full instructions in the README ♡
+      <strong>Connect your Spotify developer app</strong>
+      <p>A Spotify developer Client ID is needed to use Jam.</p>
+      <p>Register this redirect address in your Spotify app: <code id="setup-redirect"></code></p>
+      <label for="setup-client-id">Spotify Client ID (public)</label>
+      <input id="setup-client-id" placeholder="32-character Client ID" maxlength="32" />
+      <button id="setup-save" class="btn">Save Client ID</button>
+      <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Open Spotify developer dashboard</a>
     </div>
 
     <div class="welcome-features">
