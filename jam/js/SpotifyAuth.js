@@ -1,5 +1,5 @@
 // Spotify OAuth 2.0 with PKCE — fully client-side, no backend needed.
-import { CLIENT_ID, SCOPES, LS, getRedirectUri } from './config.js';
+import { CLIENT_ID, SCOPES, LS, getRedirectUri } from './config.js?v=20261014';
 
 const AUTH_BASE  = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL  = 'https://accounts.spotify.com/api/token';

@@ -1,4 +1,4 @@
-import { TRACK } from './config.js';
+import { TRACK } from './config.js?v=20261014';
 
 export class HUD {
   constructor() {

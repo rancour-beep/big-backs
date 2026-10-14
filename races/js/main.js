@@ -1,17 +1,17 @@
 import * as THREE from 'three';
-import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js';
-import { createScene }                                  from './SceneSetup.js';
-import { buildTrack, updateLapProgress, initialLapState } from './Track.js';
-import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js';
-import { CarController, InputHandler }                  from './CarController.js';
-import { HUD }                                          from './HUD.js';
-import { Lobby }                                        from './Lobby.js';
-import { Garage, loadGarageSettings }                   from './Garage.js';
-import { GameAudio }                                    from './Audio.js';
+import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js?v=20261014';
+import { createScene }                                  from './SceneSetup.js?v=20261014';
+import { buildTrack, updateLapProgress, initialLapState } from './Track.js?v=20261014';
+import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js?v=20261014';
+import { CarController, InputHandler }                  from './CarController.js?v=20261014';
+import { HUD }                                          from './HUD.js?v=20261014';
+import { Lobby }                                        from './Lobby.js?v=20261014';
+import { Garage, loadGarageSettings }                   from './Garage.js?v=20261014';
+import { GameAudio }                                    from './Audio.js?v=20261014';
 import { firebaseReady, createRoom, joinRoom, registerPlayer,
          updatePlayerPos, markFinished, watchPlayers, watchCountdownEnd,
-         startCountdown, GhostManager }                 from './Firebase.js';
-import { spawnBots, computeRanking }                    from './AIBot.js';
+         startCountdown, GhostManager }                 from './Firebase.js?v=20261014';
+import { spawnBots, computeRanking }                    from './AIBot.js?v=20261014';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const S = { LOBBY:0, GARAGE:1, LOADING:2, COUNTDOWN:3, RACING:4, FINISHED:5 };

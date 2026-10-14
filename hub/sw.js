@@ -1,13 +1,13 @@
 // ─── Big Backth Hub service worker ───────────────────────────────────────────
 // Cache-first strategy for app shell so the Hub works offline once visited.
-const CACHE = 'bigbacks-hub-v2';
+const CACHE = 'bigbacks-hub-v3';
 const SHELL = [
   './',
   './index.html',
-  './style.css',
-  './pixel-cute.css',
-  './js/main.js',
-  './shared-profile.js',
+  './style.css?v=20261014',
+  './pixel-cute.css?v=20261014',
+  './js/main.js?v=20261014',
+  './shared-profile.js?v=20261014',
   './manifest.webmanifest',
 ];
 

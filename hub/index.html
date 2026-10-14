@@ -9,14 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="pixel-cute.css" />
+  <link rel="stylesheet" href="style.css?v=20261014" />
+  <link rel="stylesheet" href="pixel-cute.css?v=20261014" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#E5A8B3" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Big Backth" />
-  <script src="shared-profile.js"></script>
+  <script src="shared-profile.js?v=20261014"></script>
   <script>
     // Register service worker for offline + installability
     if ('serviceWorker' in navigator) {
@@ -165,7 +165,7 @@
         <div class="ss-title">CONNECT YOUR APPS</div>
         <div class="ss-help">
           To make activity flow into this hub from the other apps, copy <code>shared-profile.js</code> into each app's folder and include it before <code>app.js</code> / <code>main.js</code>:
-          <pre>&lt;script src="shared-profile.js"&gt;&lt;/script&gt;</pre>
+          <pre>&lt;script src="shared-profile.js?v=20261014"&gt;&lt;/script&gt;</pre>
           Then call <code>BigBacks.activity.log('beachDay','upload',{name:'MJ'})</code> in your app code. The hub picks it up live.
         </div>
       </div>
@@ -173,6 +173,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/main.js?v=20261014"></script>
 </body>
 </html>

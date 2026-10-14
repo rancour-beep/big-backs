@@ -3,8 +3,8 @@
 // Falls back silently to single-player if Firebase is unavailable.
 
 import * as THREE from 'three';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js';
-import { CAR_CONFIGS } from './config.js';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014';
+import { CAR_CONFIGS } from './config.js?v=20261014';
 
 // ── Is Firebase ready? ───────────────────────────────────────────────────────
 export function firebaseReady() {

@@ -1,4 +1,4 @@
-import { CHARACTERS, CAR_TYPES } from './config.js';
+import { CHARACTERS, CAR_TYPES } from './config.js?v=20261014';
 
 export class Lobby {
   constructor(characters, onRaceStart, onCharSelect) {

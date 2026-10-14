@@ -1,7 +1,7 @@
-import { APP_NAME, APP_VERSION, APP_CREATOR, LS } from './config.js';
-import * as Auth from './SpotifyAuth.js';
-import * as SP   from './SpotifyAPI.js';
-import { renderQR } from './QRCode.js';
+import { APP_NAME, APP_VERSION, APP_CREATOR, LS } from './config.js?v=20261014';
+import * as Auth from './SpotifyAuth.js?v=20261014';
+import * as SP   from './SpotifyAPI.js?v=20261014';
+import { renderQR } from './QRCode.js?v=20261014';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let me = null;
