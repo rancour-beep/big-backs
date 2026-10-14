@@ -1,0 +1,170 @@
+.wishlist-card {
+  background: var(--trip-paper);
+  border: 1px solid var(--trip-border);
+  border-radius: 20px;
+  padding: 28px;
+  margin: 26px 0;
+}
+.wishlist-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.wishlist-heading h2 {
+  font: 800 24px "Manrope";
+  letter-spacing: -1px;
+  color: var(--trip-ink);
+  margin: 0;
+}
+.wishlist-heading span {
+  font-size: 11px;
+  background: #eef1e6;
+  border-radius: 100px;
+  padding: 6px 10px;
+  color: #6a8266;
+}
+.song-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid #e8ece0;
+}
+.song-icon {
+  background: #e7eddc;
+  color: #547851;
+  border-radius: 10px;
+  height: 36px;
+  width: 36px;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+}
+.song-row strong {
+  font-size: 13px;
+  color: var(--trip-ink);
+}
+.song-row small {
+  display: block;
+  font-size: 10px;
+  color: var(--trip-muted);
+  margin-top: 4px;
+}
+.song-search {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--trip-green);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.song-remove {
+  border: 0;
+  background: none;
+  color: #8e9a89;
+  font-size: 20px;
+}
+.song-empty {
+  padding: 22px 0;
+  color: var(--trip-green);
+  font: 600 17px "Manrope";
+  line-height: 1.6;
+}
+.song-empty small {
+  font: 12px "DM Sans";
+  color: var(--trip-muted);
+}
+.wishlist-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.wishlist-form input {
+  min-width: 140px;
+  flex: 1;
+  background: #f8f9f0;
+  border: 1px solid var(--trip-border);
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 12px;
+  color: var(--trip-ink);
+}
+.music-button {
+  background: var(--trip-green);
+  color: #fff;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.playlist-connect {
+  background: #eef0e6;
+  border: 1px solid var(--trip-border);
+  border-radius: 16px;
+  padding: 22px;
+  margin: 20px 0;
+  font-size: 12px;
+  color: var(--trip-muted);
+}
+.playlist-connect strong {
+  color: var(--trip-green);
+  font-size: 15px;
+}
+.playlist-connect p {
+  line-height: 1.7;
+}
+.playlist-feedback {
+  font-size: 12px;
+  color: var(--trip-green);
+}
+.spotify-advanced {
+  border: 1px solid var(--trip-border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 25px;
+  font-size: 12px;
+  color: var(--trip-muted);
+}
+.spotify-advanced summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--trip-green);
+}
+.spotify-advanced .setup-warning {
+  margin-bottom: 0 !important;
+}
+.sound-note {
+  display: inline-flex;
+  font-size: 10px;
+  background: #e8ebde;
+  padding: 6px 10px;
+  border-radius: 100px;
+  margin-top: 12px;
+  color: #667c61;
+}
+@media (max-width: 640px) {
+  .wishlist-card {
+    padding: 21px;
+  }
+  .wishlist-heading h2 {
+    font-size: 21px;
+  }
+  .wishlist-form input {
+    width: 100%;
+    flex: auto;
+  }
+  .playlist-connect {
+    padding: 20px;
+  }
+  .song-row {
+    gap: 10px;
+  }
+  .song-search {
+    font-size: 10px;
+  }
+}

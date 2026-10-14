@@ -1,55 +1,24 @@
-// ─── Big Backth Hub service worker ───────────────────────────────────────────
-// Cache-first strategy for app shell so the Hub works offline once visited.
-const CACHE = 'bigbacks-hub-v3';
+const CACHE = 'bigbacks-hub-trip-v2';
 const SHELL = [
-  './',
-  './index.html',
-  './style.css?v=20261014',
-  './pixel-cute.css?v=20261014',
-  './js/main.js?v=20261014',
-  './shared-profile.js?v=20261014',
-  './manifest.webmanifest',
+ './', './index.html', './icon.svg', './trip-home.css?v=20261014d',
+ './js/main.js?v=20261014d', './js/trip-home.js?v=20261014d',
+ './shared-profile.js?v=20261014d', './manifest.webmanifest',
+ '../trip-state.js?v=20261014d', '../trip-shell.js?v=20261014d',
+ '../trip-theme.css?v=20261014d', '../coast.svg?v=20261014d',
 ];
-
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k.startsWith('bigbacks-hub-') && k !== CACHE).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
-  // Skip cross-origin (fonts, CDNs) — let the browser handle them
-  if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) {
-        // Stale-while-revalidate
-        fetch(e.request).then(net => {
-          if (net && net.ok) caches.open(CACHE).then(c => c.put(e.request, net));
-        }).catch(() => {});
-        return cached;
-      }
-      return fetch(e.request).then(net => {
-        if (net && net.ok) {
-          const copy = net.clone();
-          caches.open(CACHE).then(c => c.put(e.request, copy));
-        }
-        return net;
-      }).catch(async () => {
-        if (e.request.mode === 'navigate') return await caches.match('./index.html') || Response.error();
-        return Response.error();
-      });
-    })
-  );
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('bigbacks-hub-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{
+ if(event.request.method!=='GET')return;
+ const url=new URL(event.request.url),scope=new URL(self.registration.scope),root=new URL('../',scope);
+ const shared=['trip-state.js','trip-shell.js','trip-theme.css','coast.svg'].map(name=>new URL(name,root).pathname);
+ if(url.origin!==scope.origin||(!url.pathname.startsWith(scope.pathname)&&!shared.includes(url.pathname)))return;
+ event.respondWith((async()=>{
+  const cache=await caches.open(CACHE);
+  if(event.request.mode==='navigate'){
+   try{const response=await fetch(event.request);if(response.ok)await cache.put(event.request,response.clone());return response;}catch{return await cache.match('./index.html')||Response.error();}
+  }
+  const cached=await cache.match(event.request);if(cached)return cached;
+  try{const response=await fetch(event.request);if(response.ok)await cache.put(event.request,response.clone());return response;}catch{return Response.error();}
+ })());
 });

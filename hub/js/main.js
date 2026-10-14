@@ -10,47 +10,48 @@ const DEFAULT_PATHS = { beachDay: '../beach-day/', races: '../races/', jam: '../
 const APPS = [
   {
     key:   'beachDay',
-    name:  'BEACH DAY',
+    name:  'Getting there',
     icon:  '🏖',
     color: '#E5A8B3',
     color2:'#C8A4B5',
-    desc:  'Carpool, costs, currencies, group chat',
+    desc:  'Seats, starting points, arrival times and travel costs.',
     path:  DEFAULT_PATHS.beachDay,
-    statLabel: (s) => `${s.peopleCount ?? 12} in the carpool · £${(s.totalCost ?? 179).toFixed(0)} total`,
+    statLabel: (s) => `${s.peopleCount ?? 12} in the carpool · £${(s.totalCost ?? 164).toFixed(0)} total`,
   },
   {
     key:   'races',
-    name:  'RACES',
+    name:  'Play together',
     icon:  '🏁',
     color: '#FF4500',
     color2:'#FFD700',
-    desc:  '3D arcade racer with garage & multiplayer',
+    desc:  'A little friendly competition for the downtime.',
     path:  DEFAULT_PATHS.races,
-    statLabel: (s) => s.bestLap ? `Best lap: ${s.bestLap.toFixed(3)}s · ${s.wins||0} wins` : 'Hit the track — set a record',
+    statLabel: (s) => s.bestLap ? `Best lap: ${s.bestLap.toFixed(3)}s · ${s.wins||0} wins` : 'Summit Run · mountain circuit',
   },
   {
     key:   'jam',
-    name:  'JAM',
+    name:  'The trip playlist',
     icon:  '🎵',
     color: '#1DB954',
     color2:'#1ED760',
-    desc:  'Collaborative Spotify playlist + QR code',
+    desc:  'Build the soundtrack. Add song ideas before connecting Spotify.',
     path:  DEFAULT_PATHS.jam,
-    statLabel: (s) => `${s.jamsHosted || 0} jamth hosted · ${s.tracksAdded || 0} trackth added`,
+    statLabel: (s) => 'Wishlist works without a Spotify account',
   },
 ];
 
 const ACTIVITY_LABELS = {
+ trip:{icon:'↗',color:'#71916a',events:{details:d=>'updated the trip to <b>'+d.destination+'</b>',friend:d=>'added <b>'+d.name+'</b> to the crew',expense:d=>'recorded <b>'+d.name+'</b>'}},
   beachDay: {
     icon: '🏖',
     color: '#E5A8B3',
     events: {
       'upload':       (d) => `uploaded a picture for <b>${d.name || 'someone'}</b>`,
-      'add_person':   (d) => `added <b>${d.name || 'a new perthon'}</b> to the carpool`,
+      'add_person':   (d) => `added <b>${d.name || 'a new person'}</b> to the carpool`,
       'add_car':      (d) => `added a new car: <b>${d.name || ''}</b>`,
-      'reset':        ()  => `rethet the carpool to default`,
-      'message':      (d) => `thent a chat metthage`,
-      'create_room':  (d) => `thtarted a chat room`,
+      'reset':        ()  => `reset the carpool to default`,
+      'message':      (d) => `sent a chat message`,
+      'create_room':  (d) => `started a chat room`,
       'copy':         ()  => `copied the lineup to clipboard`,
     }
   },
@@ -58,19 +59,19 @@ const ACTIVITY_LABELS = {
     icon: '🏁',
     color: '#FF4500',
     events: {
-      'race_start':    (d) => `thtarted a race as <b>${d.character || 'someone'}</b>`,
-      'race_finish':   (d) => `finithed lap ${d.lap||1} in <b>${d.time?.toFixed(3) || '?'}s</b>`,
+      'race_start':    (d) => `started a race as <b>${d.character || 'someone'}</b>`,
+      'race_finish':   (d) => `finished lap ${d.lap||1} in <b>${d.time?.toFixed(3) || '?'}s</b>`,
       'garage_save':   (d) => `tuned their <b>${d.carType || 'car'}</b> in the garage`,
       'multiplayer':   (d) => `joined room <code>${d.roomId || ''}</code>`,
-      'best_lap':      (d) => `🏆 new beth lap: <b>${d.time?.toFixed(3)||'?'}s</b>`,
+      'best_lap':      (d) => `🏆 new best lap: <b>${d.time?.toFixed(3)||'?'}s</b>`,
     }
   },
   jam: {
     icon: '🎵',
     color: '#1DB954',
     events: {
-      'create_jam':   (d) => `tcheated jam: <b>${d.name || 'untitled'}</b>`,
-      'add_track':    (d) => `added <b>${d.track || 'a thong'}</b>`,
+      'create_jam':   (d) => `created jam: <b>${d.name || 'untitled'}</b>`,
+      'add_track':    (d) => `added <b>${d.track || 'a song'}</b>`,
       'join_jam':     (d) => `joined a jam`,
       'leave_jam':    ()  => `left a jam`,
     }
@@ -79,7 +80,7 @@ const ACTIVITY_LABELS = {
     icon: '🏠',
     color: '#9B7FFF',
     events: {
-      'profile_set':  (d) => `thet their name to <b>${d.name || ''}</b>`,
+      'profile_set':  (d) => `set their name to <b>${d.name || ''}</b>`,
       'avatar':       ()  => `updated their avatar`,
     }
   }
@@ -109,10 +110,7 @@ function boot() {
     });
   }
 
-  // First-time visitor — open profile editor
-  if (!BigBacks.profile.exists()) {
-    setTimeout(() => openProfileModal(true), 600);
-  }
+
 }
 
 // ─── App cards ─────────────────────────────────────────────────────────────
@@ -123,7 +121,7 @@ function renderApps() {
     const stats = allStats[app.key] || {};
     const userPath = getUserPath(app.key, app.path);
     return `
-      <a class="app-card" href="${userPath}" style="--c1:${app.color};--c2:${app.color2}" data-app="${app.key}">
+      <a class="app-card" href="${esc(userPath)}" style="--c1:${app.color};--c2:${app.color2}" data-app="${app.key}">
         <div class="ac-bg"></div>
         <div class="ac-header">
           <span class="ac-icon">${app.icon}</span>
@@ -151,9 +149,9 @@ function renderActivity() {
       <div class="feed-empty">
         <div class="fe-icon">✨</div>
         <div class="fe-title">No activity yet</div>
-        <div class="fe-sub">Open one of the apps above. As you do thingth, they'll show up here ♡</div>
+        <div class="fe-sub">Trip and carpool updates will appear here.</div>
         <div class="fe-tip">
-          To wire up activity from the existing apps, copy <code>shared-profile.js</code> into each one and follow the README.
+          Your profile and activity are connected across these pages in the same browser.
         </div>
       </div>
     `;
@@ -214,7 +212,7 @@ function wireProfileModal() {
   $('pm-pic-btn').addEventListener('click', () => $('pm-pic-input').click());
   $('pm-pic-input').addEventListener('change', handlePicUpload);
   $('pm-color-input').addEventListener('input', (e) => {
-    $('pm-pic-preview').style.background = e.target.value;
+    $('pm-pic-btn').style.background = e.target.value;
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeProfileModal();
@@ -229,12 +227,12 @@ function openProfileModal(firstTime) {
   $('pm-color-input').value = p.color || '#E5A8B3';
   pendingAvatar = p.avatar || '';
   if (p.avatar) {
-    $('pm-pic-preview').style.backgroundImage = `url('${p.avatar}')`;
-    $('pm-pic-preview').textContent = '';
+    $('pm-pic-btn').style.backgroundImage = `url('${p.avatar}')`;
+    $('pm-pic-btn').textContent = '';
   } else {
-    $('pm-pic-preview').style.background = p.color || '#E5A8B3';
-    $('pm-pic-preview').style.backgroundImage = '';
-    $('pm-pic-preview').textContent = (p.name?.[0] || '?').toUpperCase();
+    $('pm-pic-btn').style.background = p.color || '#E5A8B3';
+    $('pm-pic-btn').style.backgroundImage = '';
+    $('pm-pic-btn').textContent = (p.name?.[0] || '?').toUpperCase();
   }
   $('pm-title').textContent = firstTime ? 'WELCOME TO THE NETWORK' : 'EDIT YOUR PROFILE';
   $('pm-overlay').classList.add('open');
@@ -248,7 +246,7 @@ function closeProfileModal() {
 function saveProfile() {
   const name  = $('pm-name-input').value.trim();
   const color = $('pm-color-input').value;
-  if (!name) { toast('Type a name firtht ♡', 'error'); return; }
+  if (!name) { toast('Type a name first ♡', 'error'); return; }
   BigBacks.profile.update({ name, color, avatar: pendingAvatar });
   BigBacks.activity.log('hub', 'profile_set', { name });
   closeProfileModal();
@@ -261,16 +259,16 @@ async function handlePicUpload(e) {
   const file = e.target.files?.[0];
   if (!file) return;
   if (!file.type.startsWith('image/')) {
-    toast('Pleathe pick an image', 'error');
+    toast('Please pick an image', 'error');
     return;
   }
   try {
     const dataUrl = await resizeImage(file, 256);
     pendingAvatar = dataUrl;
-    $('pm-pic-preview').style.backgroundImage = `url('${dataUrl}')`;
-    $('pm-pic-preview').style.backgroundSize = 'cover';
-    $('pm-pic-preview').style.backgroundPosition = 'center';
-    $('pm-pic-preview').textContent = '';
+    $('pm-pic-btn').style.backgroundImage = `url('${dataUrl}')`;
+    $('pm-pic-btn').style.backgroundSize = 'cover';
+    $('pm-pic-btn').style.backgroundPosition = 'center';
+    $('pm-pic-btn').textContent = '';
     BigBacks.activity.log('hub', 'avatar', {});
   } catch (err) {
     toast('Couldn\'t read that picture', 'error');

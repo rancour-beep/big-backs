@@ -22,7 +22,7 @@
     catch { return fallback; }
   };
   const safeSet = (key, val) => {
-    try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+    try { localStorage.setItem(key, JSON.stringify(val)); window.dispatchEvent(new CustomEvent('bigbacks-data-change',{detail:key})); return true; }
     catch { return false; }
   };
 
@@ -78,6 +78,7 @@
 
   // Cross-tab sync — apps can listen and refresh when profile/activity changes
   function onChange(cb) {
+    window.addEventListener('bigbacks-data-change', e => cb(e.detail));
     window.addEventListener('storage', (e) => {
       if ([PROFILE_KEY, ACTIVITY_KEY, STATS_KEY].includes(e.key)) cb(e.key);
     });

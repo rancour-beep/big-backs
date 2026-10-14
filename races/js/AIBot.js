@@ -2,11 +2,11 @@
 // Waypoint-following bots that drive around the oval — each bot inherits a
 // "personality" from the character stats: top speed, drift tendency, NOS use.
 import * as THREE from 'three';
-import {routeFrame,projectRoute,ROUTE_LENGTH} from './Route.js?v=20261014b';
-import { CarController }                       from './CarController.js?v=20261014b';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014b';
-import { TRACK, CHARACTERS, CAR_CONFIGS }      from './config.js?v=20261014b';
-import { initialLapState, updateLapProgress }  from './ScenicTrack.js?v=20261014b';
+import {routeFrame,projectRoute,ROUTE_LENGTH} from './Route.js?v=20261014d';
+import { CarController }                       from './CarController.js?v=20261014d';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014d';
+import { TRACK, CHARACTERS, CAR_CONFIGS }      from './config.js?v=20261014d';
+import { initialLapState, updateLapProgress }  from './ScenicTrack.js?v=20261014d';
 
 const WORLD_X = new THREE.Vector3(1, 0, 0);
 

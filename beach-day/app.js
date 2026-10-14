@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  🏖 Big Backth Beach Day — v0.2
 //  Created and owned by Shad ♡
-//  © 2026 Shad — all rightth rethurved
+//  © 2026 Shad — all rights reserved
 // ─────────────────────────────────────────────────────────────────────────────
 
 const APP_VERSION = '0.2';
@@ -340,7 +340,7 @@ function loadState() {
     state = parsed;
   } catch {
     state = deepClone(DEFAULT_STATE);
-    setTimeout(() => showToast('Thaved data wath unreadable — rethet to defaultth', 'warning'), 100);
+    setTimeout(() => showToast('Saved data wath unreadable — reset to defaultth', 'warning'), 100);
   }
 }
 
@@ -348,12 +348,14 @@ function saveState() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     window.BigBacks?.stats.update('beachDay', { peopleCount: Object.keys(state.people).length, totalCost: totalCost() });
+    if (window.TripPlan && TripPlan.get().destination !== state.beachName) TripPlan.update({destination:state.beachName});
+    window.dispatchEvent(new CustomEvent('trip-plan-change', {detail: 'bigbacks_carpool_v2'}));
     return true;
   } catch (err) {
     if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
       showToast('Thtorage full — try a thmaller picture or remove one', 'error');
     } else {
-      showToast("Couldn't thave changeth", 'error');
+      showToast("Couldn't save changeth", 'error');
     }
     return false;
   }
@@ -508,13 +510,13 @@ function renderTotals() {
   const avg = count > 0 ? total / count : 0;
 
   const label = el('div', 'total-label');
-  label.textContent = 'Total trip coth';
+  label.textContent = 'Total trip cost';
 
   const value = el('div', 'total-value');
   value.textContent = formatCurrency(total, 'GBP');
 
   const per = el('div', 'total-per');
-  per.textContent = `Per perthon: ${formatCurrency(avg, 'GBP')} · ${count} ${count === 1 ? 'perthon' : 'perthonth'}`;
+  per.textContent = `Per person: ${formatCurrency(avg, 'GBP')} · ${count} ${count === 1 ? 'person' : 'people'}`;
 
   card.append(label, value, per);
 
@@ -545,7 +547,7 @@ function renderTotals() {
   }
 
   const btn = el('button', 'show-all-btn');
-  btn.textContent = `💱 All ${Object.keys(RATES).length} currentheeth`;
+  btn.textContent = `💱 All ${Object.keys(RATES).length} currencies`;
   btn.addEventListener('click', showAllCurrencies);
   card.appendChild(btn);
 }
@@ -598,7 +600,7 @@ function buildSeat(carId, seatIndex, personId) {
     seat.appendChild(buildPersonChip(personId, { type: 'seat', carId, seatIndex }));
   } else {
     const hint = el('span');
-    hint.textContent = 'empty theat';
+    hint.textContent = 'Empty seat';
     hint.style.pointerEvents = 'none';
     seat.appendChild(hint);
   }
@@ -627,7 +629,7 @@ function buildPersonChip(personId, source) {
 
   const removeBtn = el('button', 'btn-icon');
   removeBtn.innerHTML = '✕';
-  removeBtn.title = 'Remove perthon';
+  removeBtn.title = 'Remove person';
 
   chip.append(avatar, nameEl, removeBtn);
 
@@ -667,7 +669,7 @@ function buildTravelRow(personId) {
   row.appendChild(makeSelect('By', p.transport, [
     { value: 'drive', label: '🚗 Drive' },
     { value: 'train', label: '🚆 Train' },
-    { value: 'bus',   label: '🚌 Buth'  },
+    { value: 'bus',   label: '🚌 Bus'  },
     { value: 'walk',  label: '🚶 Walk'  },
     { value: 'bike',  label: '🚲 Bike'  }
   ], (v) => {
@@ -676,7 +678,7 @@ function buildTravelRow(personId) {
   }));
 
   // Cost
-  const costField = makeField('Coth (£)', p.cost, 'number', '0', (v) => {
+  const costField = makeField('Cost (£)', p.cost, 'number', '0', (v) => {
     state.people[personId].cost = parseFloat(v) || 0;
     saveState();
     renderTotals();
@@ -1004,7 +1006,7 @@ function closeColorMenu() {
   if (activeColorMenu) { activeColorMenu.remove(); activeColorMenu = null; }
 }
 
-// ── Add / Remove Car & Perthon ───────────────────────────────────────────────
+// ── Add / Remove Car & Person ───────────────────────────────────────────────
 
 function addCarAction() {
   if (state.cars.length >= MAX_CARS) { showToast(`Max ${MAX_CARS} carth`, 'error'); return; }
@@ -1030,7 +1032,7 @@ function addCarAction() {
 
 function removeCarAction(carId) {
   const car = state.cars.find(c => c.id === carId);
-  if (!confirm(`Remove "${car.name}"? People inthide will go to the unathigned pool.`)) return;
+  if (!confirm(`Remove "${car.name}"? People inthide will go to the unasigned pool.`)) return;
   state.pool.push(...car.seats.filter(Boolean));
   state.cars = state.cars.filter(c => c.id !== carId);
   saveState(); render();
@@ -1039,11 +1041,11 @@ function removeCarAction(carId) {
 
 function addPersonAction() {
   const total = Object.keys(state.people).length;
-  if (total >= MAX_PEOPLE) { showToast(`Max ${MAX_PEOPLE} perthonth`, 'error'); return; }
+  if (total >= MAX_PEOPLE) { showToast(`Max ${MAX_PEOPLE} people`, 'error'); return; }
   showFormModal({
-    title: 'Add a perthon',
+    title: 'Add a person',
     fields: [{ name: 'name', label: 'Name', type: 'text', placeholder: 'e.g. Alex', value: '' }],
-    confirmText: 'Add Perthon',
+    confirmText: 'Add Person',
     onConfirm(vals) {
       const name = vals.name.trim();
       if (!name) { showToast('Name ith required', 'error'); return; }
@@ -1093,7 +1095,7 @@ function copyLineup() {
 function copyTravelPlan() {
   const total = totalCost();
   const lines = [
-    `🏖 Big Backth Beach Day — Travel & Coth`,
+    `🏖 Big Backth Beach Day — Travel & Cost`,
     `📍 Detthtination: ${state.beachName}`,
     ''
   ];
@@ -1126,13 +1128,13 @@ function copyText(text, successMsg) {
 // ── Reset ─────────────────────────────────────────────────────────────────────
 
 function resetToDefault() {
-  if (!confirm('Rethet everything back to the original lineup?')) return;
+  if (!confirm('Reset everything back to the original lineup?')) return;
   state = deepClone(DEFAULT_STATE);
   saveState(); render();
   SoundKit.sfx.reset();
   window.BigBacks?.activity.log('beachDay', 'reset', {});
   window.BigBacks?.stats.update('beachDay', { peopleCount: Object.keys(state.people).length, totalCost: totalCost() });
-  showToast('Rethet to defaultth', 'info');
+  showToast('Reset to defaultth', 'info');
 }
 
 // ── Modal: form mode ─────────────────────────────────────────────────────────
@@ -1142,7 +1144,7 @@ function showFormModal({ title, fields, confirmText, onConfirm }) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-confirm-btn').textContent = confirmText || 'Confirm';
   document.getElementById('modal-confirm-btn').style.display = '';
-  document.getElementById('modal-cancel-btn').textContent = 'Canthel';
+  document.getElementById('modal-cancel-btn').textContent = 'Cancel';
   document.getElementById('modal-body').innerHTML = '';
 
   const form = document.getElementById('modal-form');
@@ -1180,9 +1182,9 @@ function showFormModal({ title, fields, confirmText, onConfirm }) {
 
 function showAllCurrencies() {
   modalMode = 'info';
-  document.getElementById('modal-title').textContent = 'All currentheeth ♡';
+  document.getElementById('modal-title').textContent = 'All currencies ♡';
   document.getElementById('modal-confirm-btn').style.display = 'none';
-  document.getElementById('modal-cancel-btn').textContent = 'Cloth';
+  document.getElementById('modal-cancel-btn').textContent = 'Close';
   document.getElementById('modal-form').innerHTML = '';
 
   const total = totalCost();
@@ -1225,7 +1227,7 @@ function hideModal() {
   document.getElementById('modal-confirm-btn').style.display = '';
   document.getElementById('modal-confirm-btn').disabled = false;
   document.getElementById('modal-confirm-btn').onclick = null;
-  document.getElementById('modal-cancel-btn').textContent = 'Canthel';
+  document.getElementById('modal-cancel-btn').textContent = 'Cancel';
   document.getElementById('modal-body').innerHTML = '';
   document.getElementById('modal-form').innerHTML = '';
   // Keep a permanent preventDefault so a stray submit (after onclick clears state) never reloads the page.
@@ -1244,11 +1246,11 @@ function showUploadModal(personId) {
   document.getElementById('modal-form').onsubmit = (e) => e.preventDefault();
 
   const cancelBtn = document.getElementById('modal-cancel-btn');
-  cancelBtn.textContent = 'Canthel';
+  cancelBtn.textContent = 'Cancel';
 
   const confirmBtn = document.getElementById('modal-confirm-btn');
   confirmBtn.style.display = '';
-  confirmBtn.textContent = 'Thave picture';
+  confirmBtn.textContent = 'Save picture';
   confirmBtn.disabled = true;
 
   const body = document.getElementById('modal-body');
@@ -1291,7 +1293,7 @@ function showUploadModal(personId) {
 
   // Dropzone
   const dropzone = el('div', 'upload-dropzone');
-  dropzone.innerHTML = '<div class="dz-emoji">📷</div><div class="dz-text">Click or drop an image ♡</div><div class="dz-sub">Anyone can upload — pictureth are thaved on thith device</div>';
+  dropzone.innerHTML = '<div class="dz-emoji">📷</div><div class="dz-text">Click or drop an image ♡</div><div class="dz-sub">Anyone can upload — pictureth are saved on this device</div>';
   body.appendChild(dropzone);
 
   // Helper: stage a file
@@ -1307,7 +1309,7 @@ function showUploadModal(personId) {
       preview.style.backgroundImage = `url("${dataURL}")`;
       preview.classList.remove('upload-preview-fallback');
       preview.textContent = '';
-      previewCaption.textContent = 'New picture (not yet thaved)';
+      previewCaption.textContent = 'New picture (not yet saved)';
       confirmBtn.disabled = false;
     } catch (err) {
       if (err && err.message === 'not an image') {
@@ -1377,7 +1379,7 @@ function showUploadModal(personId) {
       hideModal();
       SoundKit.sfx.upload();
       window.BigBacks?.activity.log('beachDay', 'upload', { name: person.name });
-      showToast('Picture thaved ♡', 'success', { silent: true });
+      showToast('Picture saved ♡', 'success', { silent: true });
     } else {
       // saveState() already toasted the error
       state.people[personId].picture = previous;
@@ -1758,9 +1760,9 @@ const Chat = (() => {
     if (roomId) {
       s.innerHTML = `🌐 <strong>connected</strong> · room <code>${escapeHtml(roomId.slice(0, 8))}</code>`;
     } else if (me) {
-      s.textContent = `🏠 local mode · thigned in as ${me.name}`;
+      s.textContent = `🏠 local mode · signed in as ${me.name}`;
     } else {
-      s.textContent = '🏠 local mode · thith device only';
+      s.textContent = '🏠 local mode · this device only';
     }
     const roomBtn = document.getElementById('chat-room-btn');
     if (roomBtn) {
@@ -1788,7 +1790,7 @@ const Chat = (() => {
         messages = messages.slice(-Math.floor(CHAT_MAX / 2));
         try { localStorage.setItem(CHAT_MSGS_KEY, JSON.stringify(messages)); }
         catch {}
-        showToast('Chat storage full — trimmed old metthageth', 'warning');
+        showToast('Chat storage full — trimmed old messages', 'warning');
       }
     }
   }
@@ -1898,7 +1900,7 @@ const Chat = (() => {
   }
 
   function signOut() {
-    if (!confirm('Thign out of chat? Your metthageth thtay viewable, you just thtop being thigned in.')) return;
+    if (!confirm('Sign out of chat? Your messages stay viewable, you just thtop being signed in.')) return;
     me = null;
     pendingAvatar = '';
     saveSession();
@@ -1908,8 +1910,8 @@ const Chat = (() => {
   }
 
   function clearChat() {
-    const scope = roomId ? 'in thith room (for EVERYONE in it)' : 'on thith device';
-    if (!confirm(`Clear ALL chat metthageth ${scope}? Thith cannot be undone.`)) return;
+    const scope = roomId ? 'in this room (for EVERYONE in it)' : 'on this device';
+    if (!confirm(`Clear ALL chat messages ${scope}? This cannot be undone.`)) return;
     messages = [];
     saveMessages();
     if (bc) try { bc.postMessage({ type: 'clear' }); } catch {}
@@ -1960,7 +1962,7 @@ const Chat = (() => {
     modalMode = 'info';
     document.getElementById('modal-title').textContent = '🌐 Chat Room';
     document.getElementById('modal-confirm-btn').style.display = 'none';
-    document.getElementById('modal-cancel-btn').textContent = 'Cloth';
+    document.getElementById('modal-cancel-btn').textContent = 'Close';
     document.getElementById('modal-form').innerHTML = '';
     const body = document.getElementById('modal-body');
     body.innerHTML = '';
@@ -1975,7 +1977,7 @@ const Chat = (() => {
       const localSection = el('div', 'room-section room-option-local');
       localSection.innerHTML = `
         <div class="ro-title">🏠 LOCAL CHAT <span class="ro-badge">no thetup</span></div>
-        <div class="ro-desc">Works right now. Lives on thith device + thyncs between tabth. Your metthageth perthitht across reloadth.</div>
+        <div class="ro-desc">Works right now. Lives on this device + thyncs between tabs. Your messages perthist across reloadth.</div>
         <button type="button" class="btn btn-secondary btn-full ro-use-local">Use chat locally ♡</button>
       `;
       localSection.querySelector('.ro-use-local').addEventListener('click', () => {
@@ -1994,9 +1996,9 @@ const Chat = (() => {
         <div class="ro-title">🌐 CROSS-DEVICE CHAT <span class="ro-badge ro-badge-pro">30 thec thetup</span></div>
         <p class="ro-desc">For friendth on other phoneth/devicheth. Needth a free JSONbin key (100k requestth/month).</p>
         <ol class="room-steps">
-          <li>Open <a href="https://jsonbin.io/login" target="_blank" rel="noopener"><strong>jsonbin.io</strong></a> → thign up with Google or email</li>
+          <li>Open <a href="https://jsonbin.io/login" target="_blank" rel="noopener"><strong>jsonbin.io</strong></a> → sign up with Google or email</li>
           <li>From the dashboard, click <strong>API Keys</strong> → copy your <strong>X-Master-Key</strong></li>
-          <li>Pathte it below ↓</li>
+          <li>Paste it below ↓</li>
         </ol>
       `;
       body.appendChild(intro);
@@ -2005,17 +2007,17 @@ const Chat = (() => {
       const wrap = el('div', 'room-url-wrap');
       const keyInput = document.createElement('input');
       keyInput.type = 'password';
-      keyInput.placeholder = 'Pathte X-Master-Key';
+      keyInput.placeholder = 'Paste X-Master-Key';
       keyInput.autocomplete = 'off';
       const keyBtn = el('button', 'btn btn-primary btn-sm');
       keyBtn.type = 'button';
-      keyBtn.textContent = 'Thave key';
+      keyBtn.textContent = 'Save key';
       const doSave = () => {
         const k = keyInput.value.trim();
-        if (!k) { showToast('Pathte the key firtht', 'error'); return; }
+        if (!k) { showToast('Paste the key firtht', 'error'); return; }
         setApiKey(k);
         hideModal();
-        showToast('Key thaved ♡', 'success');
+        showToast('Key saved ♡', 'success');
         setTimeout(() => showRoomModal(), 350);
       };
       keyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doSave(); } });
@@ -2025,7 +2027,7 @@ const Chat = (() => {
       body.appendChild(keySection);
 
       const tip = el('div', 'room-tip');
-      tip.innerHTML = '<strong>Privacy:</strong> the key is thaved on thith device only. If you share an invite link it includes the key tho friendth can write to the room. Don\'t share with thtrangerth ♡';
+      tip.innerHTML = '<strong>Privacy:</strong> the key is saved on this device only. If you share an invite link it includes the key tho friendth can write to the room. Don\'t share with thtrangerth ♡';
       body.appendChild(tip);
 
       openModal();
@@ -2036,7 +2038,7 @@ const Chat = (() => {
     const keyOk = el('div', 'room-status room-status-mini');
     keyOk.innerHTML = `<strong>🔑 API key configured</strong> <button type="button" class="room-reset-key">reset key</button>`;
     keyOk.querySelector('.room-reset-key').addEventListener('click', () => {
-      if (!confirm('Reset your API key? You\'ll need to pathte it again.')) return;
+      if (!confirm('Reset your API key? You\'ll need to paste it again.')) return;
       setApiKey('');
       leaveRoom();
       hideModal();
@@ -2052,7 +2054,7 @@ const Chat = (() => {
 
       const share = el('div', 'room-section');
       const shareLabel = el('p');
-      shareLabel.innerHTML = 'Share thith link with the big backth ♡';
+      shareLabel.innerHTML = 'Share this link with the big backth ♡';
       share.appendChild(shareLabel);
       const wrap = el('div', 'room-url-wrap');
       const urlInput = document.createElement('input');
@@ -2069,7 +2071,7 @@ const Chat = (() => {
       body.appendChild(share);
 
       const tip = el('div', 'room-tip');
-      tip.textContent = 'Each participant needs their own JSONbin key with access to this room. Metthageth poll every 4 thecondth ♡';
+      tip.textContent = 'Each participant needs their own JSONbin key with access to this room. Messages poll every 4 thecondth ♡';
       body.appendChild(tip);
 
       const leaveSection = el('div', 'room-section');
@@ -2087,12 +2089,12 @@ const Chat = (() => {
     } else {
       // Not in a room
       const status = el('div', 'room-status');
-      status.innerHTML = '<strong>🏠 Local mode</strong><br><small>Metthageth thtay on thith device only.</small>';
+      status.innerHTML = '<strong>🏠 Local mode</strong><br><small>Messages stay on this device only.</small>';
       body.appendChild(status);
 
       const create = el('div', 'room-section');
       const createP = el('p');
-      createP.textContent = 'Thtart a chat room and everyone you share the link with can chat together in real-time ♡';
+      createP.textContent = 'Start a chat room and everyone you share the link with can chat together in real-time ♡';
       create.appendChild(createP);
       const createBtn = el('button', 'btn btn-primary btn-full');
       createBtn.type = 'button';
@@ -2126,13 +2128,13 @@ const Chat = (() => {
       const joinWrap = el('div', 'room-url-wrap');
       const joinInput = document.createElement('input');
       joinInput.type = 'text';
-      joinInput.placeholder = 'Pathte room ID or invite link';
+      joinInput.placeholder = 'Paste room ID or invite link';
       const joinBtn = el('button', 'btn btn-secondary btn-sm');
       joinBtn.type = 'button';
       joinBtn.textContent = 'Join';
       const doJoin = async () => {
         let v = joinInput.value.trim();
-        if (!v) { showToast('Pathte a room ID or link', 'error'); return; }
+        if (!v) { showToast('Paste a room ID or link', 'error'); return; }
         // Extract room param if a URL was pasted
         try {
           const u = new URL(v);
@@ -2205,9 +2207,9 @@ const Chat = (() => {
         av.textContent = initialOf(me.name);
         av.classList.remove('has-image');
       }
-      av.title = `Thigned in as ${me.name}`;
+      av.title = `Signed in as ${me.name}`;
       const status = document.getElementById('chat-status');
-      if (status) status.textContent = `thigned in as ${me.name} ♡`;
+      if (status) status.textContent = `signed in as ${me.name} ♡`;
     } else {
       signin.hidden = false;
       main.hidden = true;
@@ -2229,8 +2231,8 @@ const Chat = (() => {
     if (messages.length === 0) {
       const empty = el('div', 'chat-empty');
       empty.textContent = me
-        ? 'No metthageth yet — thay hi! ♡'
-        : 'Thign in to thee and thend metthageth ♡';
+        ? 'No messages yet — say hi! ♡'
+        : 'Sign in to thee and thend messages ♡';
       list.appendChild(empty);
       return;
     }
@@ -2334,6 +2336,7 @@ const Chat = (() => {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 loadState();
+if (window.TripPlan) state.beachName = TripPlan.get().destination || state.beachName;
 setup();
 render();
 Chat.init();

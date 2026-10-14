@@ -1,18 +1,20 @@
+
+const safeText=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 import * as THREE from 'three';
-import {routeFrame,projectRoute,ROUTE_LENGTH,ROUTE} from './Route.js?v=20261014b';
-import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js?v=20261014b';
-import { createScene }                                  from './ScenicScene.js?v=20261014b';
-import { buildTrack, updateLapProgress, initialLapState } from './ScenicTrack.js?v=20261014b';
-import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js?v=20261014b';
-import { CarController, InputHandler }                  from './CarController.js?v=20261014b';
-import { HUD }                                          from './HUD.js?v=20261014b';
-import { Lobby }                                        from './Lobby.js?v=20261014b';
-import { Garage, loadGarageSettings }                   from './Garage.js?v=20261014b';
-import { GameAudio }                                    from './Audio.js?v=20261014b';
+import {routeFrame,projectRoute,ROUTE_LENGTH,ROUTE} from './Route.js?v=20261014d';
+import { CAR_CONFIGS, TRACK, CHARACTERS }              from './config.js?v=20261014d';
+import { createScene }                                  from './ScenicScene.js?v=20261014d';
+import { buildTrack, updateLapProgress, initialLapState } from './ScenicTrack.js?v=20261014d';
+import { buildCarMesh, buildSmokeSystem, applyCarCustomization } from './CarMesh.js?v=20261014d';
+import { CarController, InputHandler }                  from './CarController.js?v=20261014d';
+import { HUD }                                          from './HUD.js?v=20261014d';
+import { Lobby }                                        from './Lobby.js?v=20261014d';
+import { Garage, loadGarageSettings }                   from './Garage.js?v=20261014d';
+import { GameAudio }                                    from './Audio.js?v=20261014d';
 import { firebaseReady, createRoom, joinRoom, registerPlayer,
          updatePlayerPos, markFinished, watchPlayers, watchCountdownEnd,
-         startCountdown, GhostManager }                 from './Firebase.js?v=20261014b';
-import { spawnBots, computeRanking }                    from './AIBot.js?v=20261014b';
+         startCountdown, GhostManager }                 from './Firebase.js?v=20261014d';
+import { spawnBots, computeRanking }                    from './AIBot.js?v=20261014d';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const S = { LOBBY:0, GARAGE:1, LOADING:2, COUNTDOWN:3, RACING:4, FINISHED:5 };
@@ -94,7 +96,7 @@ function exitRace() {
 function buildOnlineUI() {
   const panel = document.getElementById('online-panel');
   if (!firebaseReady()) {
-    panel.innerHTML = `<div class="op-info">Multiplayer: add Firebase config to enable ♡</div>`;
+    panel.innerHTML = `<div class="op-info">Solo race · AI opponents. Online racing needs service setup.</div>`;
     return;
   }
   panel.innerHTML = `
@@ -447,7 +449,7 @@ function renderBotLeaderboard(ranking) {
     return `
       <div class="ob-row ${r.finished ? 'ob-done' : ''} ${r.isPlayer ? 'ob-me' : ''}">
         <span class="ob-pos">${r.place}</span>
-        <span class="ob-name" style="color:${color}">${r.name}</span>
+        <span class="ob-name" style="color:${color}">${safeText(r.name)}</span>
         <span class="ob-lap">${label}</span>
       </div>
     `;
@@ -467,7 +469,7 @@ function updateOnlineLeaderboard(data) {
   board.innerHTML = players.map((p, i) => `
     <div class="ob-row ${p.finished ? 'ob-done' : ''}">
       <span class="ob-pos">${i + 1}</span>
-      <span class="ob-name" style="color:${p.color||'#fff'}">${p.name}</span>
+      <span class="ob-name" style="color:${p.color||'#fff'}">${safeText(p.name)}</span>
       <span class="ob-lap">${p.finished ? '✓ ' + formatTime(p.finishTime) : 'Lap ' + (p.lap||1)}</span>
     </div>
   `).join('');

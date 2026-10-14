@@ -1,4 +1,6 @@
-import { CHARACTERS, CAR_TYPES } from './config.js?v=20261014b';
+
+const safeText=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+import { CHARACTERS, CAR_TYPES } from './config.js?v=20261014d';
 
 export class Lobby {
   constructor(characters, onRaceStart, onCharSelect) {
@@ -23,8 +25,8 @@ export class Lobby {
       const typeInfo = CAR_TYPES[char.car];
       card.innerHTML = `
         <div class="cc-icon">${typeInfo.icon}</div>
-        <div class="cc-name">${char.name}</div>
-        <div class="cc-city">${char.from}</div>
+        <div class="cc-name">${safeText(char.name)}</div>
+        <div class="cc-city">${safeText(char.from)}</div>
         <div class="cc-type">${typeInfo.name}</div>
       `;
       card.addEventListener('click', () => this._selectChar(char));
@@ -60,7 +62,7 @@ export class Lobby {
     const typeInfo = CAR_TYPES[char.car];
     document.getElementById('sel-name').textContent     = char.name;
     document.getElementById('sel-quote').textContent    = char.quote;
-    document.getElementById('sel-city').textContent     = `📍 ${char.from}`;
+    document.getElementById('sel-city').textContent     = `📍 ${safeText(char.from)}`;
     document.getElementById('sel-type').textContent     = `${typeInfo.icon} ${typeInfo.name}`;
     document.getElementById('sel-desc').textContent     = typeInfo.desc;
     document.getElementById('sel-car-icon').textContent = typeInfo.icon;

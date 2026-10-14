@@ -1,178 +1,490 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="author" content="Shad" />
-  <meta name="description" content="Big Backth Hub — the home of the Big Backs network. Made by Shad." />
-  <title>Big Backth Hub ♡</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261014" />
-  <link rel="stylesheet" href="pixel-cute.css?v=20261014" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#E5A8B3" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Big Backth" />
-  <script src="shared-profile.js?v=20261014"></script>
-  <script>
-    // Register service worker for offline + installability
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
-    }
-  </script>
-</head>
-<body>
-
-<div id="toast-container"></div>
-
-<!-- ════════════════ MAIN ════════════════ -->
-<div id="hub">
-
-  <!-- Background animation -->
-  <div class="hub-bg">
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div class="bg-orb orb-3"></div>
-    <div class="bg-scanlines"></div>
-  </div>
-
-  <!-- Top bar -->
-  <header class="topbar">
-    <div class="tb-left">
-      <span class="tb-emoji">🏠</span>
-      <span class="tb-title">BIG BACKTH</span>
-      <span class="tb-sep">·</span>
-      <span class="tb-sub">network</span>
-    </div>
-    <div class="tb-right">
-      <button id="btn-install" class="install-btn" title="Add to home screen" hidden>⬇ INSTALL</button>
-      <button id="btn-settings" class="icon-btn" title="Settings">⚙</button>
-      <button id="profile-chip" class="profile-chip"></button>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-tag">SHAD'S DIGITAL CARPOOL UNIVERTHE</div>
-    <h1 class="hero-title">
-      <span class="ht-line ht-big">the big backth</span>
-      <span class="ht-line ht-network">N E T W O R K</span>
-    </h1>
-    <p class="hero-sub">every app in one place — your name, your face, your wins ♡</p>
-  </section>
-
-  <!-- App grid -->
-  <section class="apps-section">
-    <div class="section-title">🎀 APPS</div>
-    <div id="app-grid" class="app-grid"></div>
-  </section>
-
-  <!-- Activity feed -->
-  <section class="feed-section">
-    <div class="section-title">✨ RECENT ACTIVITY</div>
-    <div id="activity-list" class="feed-list"></div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="hub-footer">
-    <div>🏠 Big Backth Hub · v0.1</div>
-    <div>Made &amp; owned by <strong>Shad</strong> ♡ — © 2026, all rightth rethurved</div>
-  </footer>
-</div>
-
-<!-- ════════════════ PROFILE MODAL ════════════════ -->
-<div id="pm-overlay" class="modal-overlay">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3 id="pm-title">EDIT YOUR PROFILE</h3>
-      <button id="pm-close" class="icon-btn">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="pm-avatar-row">
-        <button id="pm-pic-btn" class="pm-pic-preview" id="pm-pic-preview" title="Upload picture"></button>
-        <input type="file" id="pm-pic-input" accept="image/*" hidden />
-        <div class="pm-pic-help">
-          <div class="pm-pic-label">Tap to upload</div>
-          <div class="pm-pic-sub">.jpg / .png / .heic</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Big Backs Trips — plan a good day together. Friends, transport, spending, packing, music and a little play."
+    />
+    <title>Big Backs · Trip together</title>
+    <meta name="theme-color" content="#244b3b" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="../trip-theme.css?v=20261014d" />
+    <link rel="stylesheet" href="trip-home.css?v=20261014d" />
+    <script src="shared-profile.js?v=20261014d"></script>
+    <script src="../trip-state.js?v=20261014d"></script>
+    <script src="../trip-shell.js?v=20261014d"></script>
+    <script>
+      if ("serviceWorker" in navigator)
+        addEventListener("load", () =>
+          navigator.serviceWorker
+            .register("trip-sw.js?v=20261014d")
+            .catch(() => {}),
+        );
+    </script>
+  </head>
+  <body>
+    <div id="toast-container" aria-live="polite"></div>
+    <main id="hub">
+      <div class="topbar">
+        <div class="tb-left">YOUR NEXT GOOD DAY</div>
+        <div class="tb-right">
+          <button id="btn-install" class="install-btn" hidden>
+            Add to home screen</button
+          ><button id="btn-settings" class="icon-btn" aria-label="Preferences">
+            ⚙</button
+          ><button
+            id="profile-chip"
+            class="profile-chip"
+            aria-label="Your profile"
+          ></button>
         </div>
       </div>
-      <div id="pm-pic-preview" class="pm-pic-preview" style="display:none"></div>
-
-      <div class="form-field">
-        <label class="ff-label">YOUR NAME</label>
-        <input type="text" id="pm-name-input" maxlength="30" placeholder="e.g. Shad" class="ff-input" />
+      <section class="trip-hero">
+        <div class="hero-copy">
+          <span class="eyebrow"
+            >A little adventure. A lot of good company.</span
+          >
+          <h1 id="trip-title">A day out,<br />together.</h1>
+          <p id="trip-subtitle"></p>
+          <div class="hero-actions">
+            <button id="edit-trip" class="trip-button primary">
+              Make it your trip ↗</button
+            ><button id="share-trip" class="trip-button">
+              Share the plan ↗
+            </button>
+          </div>
+          <div class="hero-crew">
+            <div id="crew-avatars" class="mini-avatars"></div>
+            <span id="crew-caption"></span>
+          </div>
+        </div>
+        <div class="hero-art">
+          <img
+            src="../coast.svg?v=20261014d"
+            alt="Illustrated coastal path with two friends walking toward the sea"
+          /><span id="trip-destination" class="destination-label">Formby</span>
+        </div>
+      </section>
+      <section class="trip-metrics" aria-label="Trip at a glance">
+        <div class="metric">
+          <div class="metric-icon">♡</div>
+          <div>
+            <strong id="metric-crew"></strong><span id="metric-crew-sub"></span>
+          </div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon">↗</div>
+          <div>
+            <strong id="metric-cars"></strong><span id="metric-cars-sub"></span>
+          </div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon">£</div>
+          <div>
+            <strong id="metric-cost"></strong
+            ><span>estimated travel · GBP</span>
+          </div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon">✓</div>
+          <div>
+            <strong id="metric-packing"></strong><span>essentials packed</span>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="section-header">
+          <div>
+            <h2>Everything for the good part.</h2>
+            <p>The little details, all in one place.</p>
+          </div>
+          <a class="section-link" href="#itinerary">See the day’s plan ↓</a>
+        </div>
+        <div id="app-grid" class="app-grid"></div>
+      </section>
+      <div class="plan-columns">
+        <div>
+          <section id="itinerary" class="plan-panel">
+            <div class="panel-title">
+              <h2>The day, loosely planned.</h2>
+              <span class="subtle-tag">Make it yours</span>
+            </div>
+            <div id="itinerary-list"></div>
+            <form id="itinerary-form" class="inline-form">
+              <input
+                id="stop-time"
+                type="time"
+                value="12:00"
+                aria-label="Stop time"
+                required
+              /><input
+                id="stop-title"
+                type="text"
+                placeholder="Add a stop or activity"
+                aria-label="Activity name"
+                maxlength="100"
+                required
+              /><button class="trip-button small" type="submit">Add +</button>
+            </form>
+          </section>
+          <section id="crew" class="plan-panel">
+            <div class="panel-title">
+              <h2>The people make the trip.</h2>
+              <a class="section-link" href="../beach-day/">Sort the rides ↗</a>
+            </div>
+            <div id="crew-list" class="crew-grid"></div>
+            <form id="crew-form" class="inline-form">
+              <input
+                id="crew-name"
+                placeholder="Friend’s name"
+                aria-label="Friend’s name"
+                maxlength="40"
+                required
+              /><input
+                id="crew-from"
+                placeholder="Starting from"
+                aria-label="Friend’s starting point"
+                maxlength="60"
+              /><button class="trip-button small" type="submit">
+                Add friend +
+              </button>
+            </form>
+          </section>
+          <section id="budget" class="plan-panel">
+            <div class="panel-title">
+              <h2>A little less money admin.</h2>
+              <button id="edit-trip-small" class="trip-button small">
+                Edit budget
+              </button>
+            </div>
+            <div class="budget-summary">
+              <div>
+                <small>Group budget</small><strong id="budget-limit"></strong>
+              </div>
+              <div>
+                <small>Recorded spending</small
+                ><strong id="budget-spent"></strong>
+              </div>
+            </div>
+            <div id="expenses-list"></div>
+            <p id="split-note" class="empty-note"></p>
+            <form id="expense-form" class="inline-form">
+              <input
+                id="expense-label"
+                placeholder="Lunch, parking, snacks…"
+                aria-label="Expense description"
+                maxlength="100"
+                required
+              /><input
+                id="expense-amount"
+                type="number"
+                min="0.01"
+                max="1000000"
+                step="0.01"
+                placeholder="£ amount"
+                aria-label="Expense amount in pounds"
+                required
+                style="width: 115px"
+              /><select id="expense-paid" aria-label="Who paid"></select
+              ><button class="trip-button small" type="submit">
+                Add expense +
+              </button>
+            </form>
+          </section>
+        </div>
+        <div>
+          <section id="packing" class="plan-panel">
+            <div class="panel-title">
+              <h2>Don’t forget the good stuff.</h2>
+              <span id="packing-count" class="subtle-tag"></span>
+            </div>
+            <div class="progress-track"><i id="packing-progress"></i></div>
+            <div id="packing-list"></div>
+            <form id="packing-form" class="inline-form">
+              <input
+                id="pack-label"
+                placeholder="One more thing to bring…"
+                aria-label="Packing item"
+                maxlength="120"
+                required
+              /><button class="trip-button small" type="submit">Add +</button>
+            </form>
+          </section>
+          <section class="plan-panel">
+            <div class="panel-title">
+              <h2>Notes for the crew.</h2>
+              <span class="subtle-tag">Auto-saved</span>
+            </div>
+            <textarea
+              id="trip-notes"
+              class="notes-paper"
+              maxlength="2500"
+              placeholder="Meeting spot, dietary needs, a brilliant idea…"
+              aria-label="Trip notes"
+            ></textarea>
+          </section>
+          <section class="plan-panel feed-section">
+            <div class="panel-title"><h2>The latest little updates.</h2></div>
+            <div id="activity-list" class="feed-list"></div>
+          </section>
+          <section class="plan-panel">
+            <div class="panel-title"><h2>Your plan, safely kept.</h2></div>
+            <p class="storage-note">
+              Saved in this browser. A shared link gives friends their own copy.
+              Changes are not synced between devices.
+            </p>
+            <div class="hero-actions">
+              <button id="download-backup-menu" class="trip-button small">
+                Download backup ↓</button
+              ><button id="import-backup" class="trip-button small">
+                Load a backup
+              </button>
+            </div>
+            <input
+              id="backup-file"
+              type="file"
+              accept="application/json,.json"
+              hidden
+            />
+          </section>
+        </div>
       </div>
+    </main>
+    <dialog id="edit-dialog" class="trip-dialog">
+      <h2>Make it your trip.</h2>
+      <p>The basics everyone needs before setting off.</p>
+      <form id="edit-form">
+        <div class="field">
+          <label for="edit-title">Trip name</label
+          ><input id="edit-title" maxlength="90" required />
+        </div>
+        <div class="dialog-grid">
+          <div class="field">
+            <label for="edit-destination">Destination</label
+            ><input id="edit-destination" maxlength="80" required />
+          </div>
+          <div class="field">
+            <label for="edit-date">Date</label
+            ><input id="edit-date" type="date" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="edit-meetingPoint">Meeting spot</label
+          ><input
+            id="edit-meetingPoint"
+            maxlength="150"
+            placeholder="Station, car park, café…"
+          />
+        </div>
+        <div class="dialog-grid">
+          <div class="field">
+            <label for="edit-departTime">Set off at</label
+            ><input id="edit-departTime" type="time" required />
+          </div>
+          <div class="field">
+            <label for="edit-returnTime">Head back at</label
+            ><input id="edit-returnTime" type="time" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="edit-budget">Group budget (£)</label
+          ><input
+            id="edit-budget"
+            type="number"
+            min="0"
+            max="10000000"
+            step="0.01"
+            required
+          />
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="trip-button" data-close="edit-dialog">
+            Cancel</button
+          ><button type="submit" class="trip-button primary">
+            Save the details
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="share-dialog" class="trip-dialog">
+      <h2>Get the crew on board.</h2>
+      <p>
+        A plan link includes the trip details and notes, crew names, transport
+        arrangements, itinerary, packing list and song wishlist. Friends can
+        save their own copy. It excludes personal photos, attendance and expense
+        records; changes do not sync.
+      </p>
+      <div class="hero-actions">
+        <button id="copy-link" class="trip-button primary">
+          Copy plan link ↗</button
+        ><button id="copy-brief" class="trip-button">Copy trip brief</button
+        ><button id="download-backup" class="trip-button">
+          Download backup ↓
+        </button>
+      </div>
+      <textarea
+        id="share-fallback"
+        class="notes-paper"
+        aria-label="Share text"
+        readonly
+        hidden
+      ></textarea>
+      <div class="dialog-actions">
+        <button class="trip-button" data-close="share-dialog">Done</button>
+      </div>
+    </dialog>
+    <dialog id="shared-dialog" class="trip-dialog">
+      <h2>A trip from a friend.</h2>
+      <p>
+        <strong id="import-trip-title"></strong><br /><span
+          id="import-trip-destination"
+        ></span>
+      </p>
+      <p>
+        Save this plan as your own copy? Your current trip plan will be
+        replaced. Attendance and expense records are not shared through this
+        link.
+      </p>
+      <div class="dialog-actions">
+        <button class="trip-button" data-close="shared-dialog">
+          Keep my plan</button
+        ><button id="accept-shared" class="trip-button primary">
+          Save this trip
+        </button>
+      </div>
+    </dialog>
+    <!-- ════════════════ PROFILE MODAL ════════════════ -->
+    <div id="pm-overlay" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="pm-title">EDIT YOUR PROFILE</h3>
+          <button id="pm-close" class="icon-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="pm-avatar-row">
+            <button
+              id="pm-pic-btn"
+              class="pm-pic-preview"
+              title="Upload picture"
+            ></button>
+            <input type="file" id="pm-pic-input" accept="image/*" hidden />
+            <div class="pm-pic-help">
+              <div class="pm-pic-label">Tap to upload</div>
+              <div class="pm-pic-sub">JPG / PNG / WebP</div>
+            </div>
+          </div>
 
-      <div class="form-field">
-        <label class="ff-label">YOUR ACCENT COLOUR</label>
-        <input type="color" id="pm-color-input" value="#E5A8B3" class="ff-color" />
-        <div class="ff-help">Thith colour reprethentth you across all the appth</div>
+          <div class="form-field">
+            <label class="ff-label">YOUR NAME</label>
+            <input
+              type="text"
+              id="pm-name-input"
+              maxlength="30"
+              placeholder="e.g. Shad"
+              class="ff-input"
+            />
+          </div>
+
+          <div class="form-field">
+            <label class="ff-label">YOUR ACCENT COLOUR</label>
+            <input
+              type="color"
+              id="pm-color-input"
+              value="#E5A8B3"
+              class="ff-color"
+            />
+            <div class="ff-help">
+              This colour represents you across the pages
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="pm-save" class="btn-primary">💾 SAVE PROFILE</button>
+        </div>
       </div>
     </div>
-    <div class="modal-actions">
-      <button id="pm-save" class="btn-primary">💾 SAVE PROFILE</button>
-    </div>
-  </div>
-</div>
 
-<!-- ════════════════ SETTINGS MODAL ════════════════ -->
-<div id="settings-overlay" class="modal-overlay">
-  <div class="modal-card modal-card-lg">
-    <div class="modal-header">
-      <h3>HUB SETTINGS</h3>
-      <button id="btn-settings-close" class="icon-btn">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="settings-section">
-        <div class="ss-title">APP PATHS</div>
-        <div class="ss-help">
-          Leave blank to use the auto-defaults (recommended).<br>
-          <strong>⚠ Don't paste <code>github.com</code> URLs</strong> — those are source-code views, not deployed sites.
-          The right URL looks like <code>https://USER.github.io/REPO/app-name/</code>.
+    <!-- ════════════════ SETTINGS MODAL ════════════════ -->
+    <div id="settings-overlay" class="modal-overlay">
+      <div class="modal-card modal-card-lg">
+        <div class="modal-header">
+          <h3>Preferences & backup</h3>
+          <button id="btn-settings-close" class="icon-btn">✕</button>
         </div>
-        <div class="form-field">
-          <label class="ff-label">🏖 BEACH DAY URL</label>
-          <input type="text" id="path-beachDay" placeholder="../beach-day/  or  https://you.github.io/repo/beach-day/" class="ff-input" />
-        </div>
-        <div class="form-field">
-          <label class="ff-label">🏁 RACES URL</label>
-          <input type="text" id="path-races" placeholder="../races/  or  https://you.github.io/repo/races/" class="ff-input" />
-        </div>
-        <div class="form-field">
-          <label class="ff-label">🎵 JAM URL</label>
-          <input type="text" id="path-jam" placeholder="../jam/  or  https://you.github.io/repo/jam/" class="ff-input" />
-        </div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
-          <button id="btn-save-paths" class="btn-primary">Save paths</button>
-          <button id="btn-reset-paths" class="btn-danger">↺ Reset all to defaults</button>
+        <div class="modal-body">
+          <div class="settings-section" hidden>
+            <div class="ss-title">APP PATHS</div>
+            <div class="ss-help">
+              Leave blank to use the auto-defaults (recommended).<br />
+              <strong>⚠ Don't paste <code>github.com</code> URLs</strong> —
+              those are source-code views, not deployed sites. The right URL
+              looks like <code>https://USER.github.io/REPO/app-name/</code>.
+            </div>
+            <div class="form-field">
+              <label class="ff-label">🏖 BEACH DAY URL</label>
+              <input
+                type="text"
+                id="path-beachDay"
+                placeholder="../beach-day/  or  https://you.github.io/repo/beach-day/"
+                class="ff-input"
+              />
+            </div>
+            <div class="form-field">
+              <label class="ff-label">🏁 RACES URL</label>
+              <input
+                type="text"
+                id="path-races"
+                placeholder="../races/  or  https://you.github.io/repo/races/"
+                class="ff-input"
+              />
+            </div>
+            <div class="form-field">
+              <label class="ff-label">🎵 JAM URL</label>
+              <input
+                type="text"
+                id="path-jam"
+                placeholder="../jam/  or  https://you.github.io/repo/jam/"
+                class="ff-input"
+              />
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+              <button id="btn-save-paths" class="btn-primary">
+                Save paths
+              </button>
+              <button id="btn-reset-paths" class="btn-danger">
+                ↺ Reset all to defaults
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="ss-title">DATA</div>
+            <div class="settings-actions">
+              <button id="btn-clear-activity" class="btn-secondary">
+                🗑 Clear activity feed
+              </button>
+              <button id="btn-clear-profile" class="btn-danger">
+                ↺ Reset profile
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="ss-title">ABOUT YOUR PLAN</div>
+            <div class="ss-help">
+              Your trip plan is saved in this browser. Share a plan link for
+              friends to load a copy; changes do not sync between devices.
+              Spotify and online chat need service setup. Your carpool, profile
+              and activity stay on this device.
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="settings-section">
-        <div class="ss-title">DATA</div>
-        <div class="settings-actions">
-          <button id="btn-clear-activity" class="btn-secondary">🗑 Clear activity feed</button>
-          <button id="btn-clear-profile" class="btn-danger">↺ Reset profile</button>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="ss-title">CONNECT YOUR APPS</div>
-        <div class="ss-help">
-          To make activity flow into this hub from the other apps, copy <code>shared-profile.js</code> into each app's folder and include it before <code>app.js</code> / <code>main.js</code>:
-          <pre>&lt;script src="shared-profile.js?v=20261014"&gt;&lt;/script&gt;</pre>
-          Then call <code>BigBacks.activity.log('beachDay','upload',{name:'MJ'})</code> in your app code. The hub picks it up live.
-        </div>
-      </div>
     </div>
-  </div>
-</div>
 
-<script type="module" src="js/main.js?v=20261014"></script>
-</body>
+    <script type="module" src="js/main.js?v=20261014d"></script>
+    <script type="module" src="js/trip-home.js?v=20261014d"></script>
+  </body>
 </html>

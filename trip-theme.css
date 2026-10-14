@@ -1,0 +1,512 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+:root {
+  --trip-bg: #f5f4ed;
+  --trip-paper: #fffef8;
+  --trip-ink: #22352e;
+  --trip-muted: #6c7970;
+  --trip-green: #244b3b;
+  --trip-sage: #dbe5d7;
+  --trip-border: #dde1d5;
+  --trip-gold: #ead8a0;
+  --trip-radius: 18px;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--trip-bg) !important;
+  color: var(--trip-ink) !important;
+  font-family: "DM Sans", system-ui, sans-serif !important;
+}
+body::before,
+body::after {
+  display: none !important;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #b39544;
+  outline-offset: 4px;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+[hidden] {
+  display: none !important;
+}
+.trip-navigation {
+  height: 92px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  z-index: 40;
+  background: var(--trip-bg);
+}
+.trip-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-decoration: none;
+  font:
+    800 23px "Manrope",
+    sans-serif;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+.brand-mark {
+  background: var(--trip-green);
+  color: #f1e8c9;
+  border-radius: 13px;
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  font-size: 29px;
+  letter-spacing: -4px;
+  padding-right: 3px;
+}
+.trip-brand small {
+  display: block;
+  font: 500 9px "DM Sans";
+  letter-spacing: 1px;
+  margin-top: 3px;
+  color: var(--trip-muted);
+}
+.trip-navigation nav {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.trip-navigation nav a {
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 100px;
+  color: var(--trip-muted);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.trip-navigation nav a[aria-current="page"] {
+  background: var(--trip-green);
+  color: #fff;
+}
+.trip-navigation nav a:hover {
+  background: var(--trip-sage);
+  color: var(--trip-green);
+}
+.save-indicator {
+  font-size: 11px;
+  color: var(--trip-muted);
+  white-space: nowrap;
+}
+.save-indicator i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #6c926c;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.trip-global-footer {
+  max-width: 1280px;
+  margin: 50px auto 0;
+  padding: 24px 32px;
+  border-top: 1px solid var(--trip-border);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--trip-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+/* Carry the same calm materials through the existing functional tools. */
+body[data-trip-page="travel"] {
+  --bg: var(--trip-bg);
+  --text: var(--trip-ink);
+  --card: var(--trip-paper);
+  --border: var(--trip-border);
+}
+body[data-trip-page="travel"] .app-header {
+  max-width: 1280px;
+  margin: auto;
+  padding: 26px 32px;
+  background: none !important;
+}
+body[data-trip-page="travel"] h1 {
+  font: 800 clamp(24px, 4vw, 40px) "Manrope" !important;
+  letter-spacing: -1.5px;
+  color: var(--trip-ink) !important;
+}
+body[data-trip-page="travel"] .hero-title,
+body[data-trip-page="travel"] .brand-title {
+  color: var(--trip-ink) !important;
+}
+body[data-trip-page="travel"] .app-main {
+  max-width: 1280px;
+  margin: auto;
+}
+body[data-trip-page="travel"] .card,
+body[data-trip-page="travel"] .car-card,
+body[data-trip-page="travel"] .totals-card {
+  background: var(--trip-paper) !important;
+  border: 1px solid var(--trip-border) !important;
+  box-shadow: none !important;
+  border-radius: var(--trip-radius) !important;
+}
+body[data-trip-page="travel"] .btn {
+  font-family: "DM Sans" !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  border-radius: 9px !important;
+  border: 1px solid var(--trip-border) !important;
+}
+body[data-trip-page="travel"] .btn-primary {
+  background: var(--trip-green) !important;
+  color: #fff !important;
+}
+body[data-trip-page="travel"] .chat-fab {
+  background: var(--trip-green) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 25px #244b3b22 !important;
+}
+body[data-trip-page="travel"] .chat-panel,
+body[data-trip-page="travel"] #chat-panel {
+  background: var(--trip-paper) !important;
+}
+body[data-trip-page="travel"] h2,
+body[data-trip-page="travel"] h3 {
+  font-family: "Manrope" !important;
+  letter-spacing: -0.5px !important;
+  color: var(--trip-ink) !important;
+}
+body[data-trip-page="travel"] .app-footer {
+  display: none;
+}
+body[data-trip-page="travel"] .avatar {
+  border-radius: 50% !important;
+}
+body[data-trip-page="travel"] .travel-row {
+  background: var(--trip-paper) !important;
+  border-color: var(--trip-border) !important;
+}
+body[data-trip-page="travel"] input,
+body[data-trip-page="travel"] select {
+  background: #fffef9 !important;
+  color: var(--trip-ink) !important;
+  border: 1px solid var(--trip-border) !important;
+  border-radius: 8px !important;
+}
+body[data-trip-page="travel"] .modal-card,
+body[data-trip-page="travel"] #settings-drawer {
+  background: var(--trip-paper) !important;
+  color: var(--trip-ink) !important;
+}
+body[data-trip-page="music"] {
+  --bg: var(--trip-bg);
+  --text: var(--trip-ink);
+  --muted: var(--trip-muted);
+  --border: var(--trip-border);
+}
+body[data-trip-page="music"] .screen {
+  min-height: calc(100dvh - 92px);
+}
+body[data-trip-page="music"] #welcome {
+  padding: 36px 24px 70px;
+  background: var(--trip-bg) !important;
+}
+body[data-trip-page="music"] .welcome-bg {
+  display: none;
+}
+body[data-trip-page="music"] .welcome-inner {
+  max-width: 1000px;
+  width: 100%;
+  text-align: left;
+}
+.logo-block {
+  margin-bottom: 20px;
+}
+body[data-trip-page="music"] .logo-emoji {
+  display: none;
+}
+body[data-trip-page="music"] .app-title {
+  font: 800 clamp(32px, 6vw, 56px) "Manrope";
+  letter-spacing: -2px;
+  color: var(--trip-ink);
+  background: none;
+  -webkit-text-fill-color: var(--trip-ink);
+}
+body[data-trip-page="music"] .app-tag {
+  color: var(--trip-muted);
+  font-size: 15px;
+}
+body[data-trip-page="music"] .setup-warning {
+  background: #efe7d0;
+  border: 1px solid #ddd1ac;
+  color: var(--trip-ink);
+  line-height: 1.6;
+  border-radius: 14px;
+  font-size: 13px;
+  margin: 24px 0;
+  padding: 20px;
+}
+body[data-trip-page="music"] .welcome-features {
+  display: none;
+}
+body[data-trip-page="music"] .btn-spotify {
+  background: var(--trip-green);
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  font-family: "DM Sans";
+  letter-spacing: 0;
+  font-size: 13px;
+  box-shadow: none;
+}
+body[data-trip-page="music"] .app-footer {
+  display: none;
+}
+body[data-trip-page="music"] .card {
+  background: var(--trip-paper) !important;
+  color: var(--trip-ink);
+  border: 1px solid var(--trip-border);
+  border-radius: 18px;
+  box-shadow: none;
+}
+body[data-trip-page="music"] .card-title {
+  font: 700 15px "Manrope";
+  color: var(--trip-ink);
+  letter-spacing: 0;
+}
+body[data-trip-page="music"] .text-input {
+  background: #fffef9;
+  color: var(--trip-ink);
+  border: 1px solid var(--trip-border);
+  border-radius: 10px;
+}
+body[data-trip-page="music"] .topbar {
+  background: var(--trip-paper);
+  color: var(--trip-ink);
+  border-bottom: 1px solid var(--trip-border);
+}
+body[data-trip-page="music"] #hub,
+body[data-trip-page="music"] #jam {
+  background: var(--trip-bg) !important;
+}
+body[data-trip-page="play"] .trip-navigation {
+  height: 76px;
+  background: #132630;
+  color: #fff;
+  max-width: none;
+  padding: 0 32px;
+}
+body[data-trip-page="play"] .trip-brand small,
+body[data-trip-page="play"] .save-indicator {
+  color: #c1ccc5;
+}
+body[data-trip-page="play"] .trip-navigation nav a {
+  color: #cbd9cf;
+}
+body[data-trip-page="play"] .trip-navigation nav a[aria-current="page"] {
+  background: #d0c094;
+  color: #162c29;
+}
+body[data-trip-page="play"] .screen {
+  height: calc(100dvh - 76px);
+}
+body[data-trip-page="play"] .race-tools {
+  top: 90px;
+}
+body[data-trip-page="play"]:has(#game.active) .trip-navigation {
+  display: none;
+}
+body[data-trip-page="play"]:has(#game.active) .screen {
+  height: 100dvh;
+}
+body[data-trip-page="play"]:has(#game.active) .race-tools {
+  top: 16px;
+}
+@media (max-width: 1000px) {
+  .trip-navigation {
+    padding: 0 24px;
+    gap: 12px;
+  }
+  .save-indicator {
+    display: none;
+  }
+  .trip-navigation nav a {
+    padding: 10px 12px;
+  }
+}
+@media (max-width: 640px) {
+  .trip-navigation {
+    height: auto;
+    padding: 18px 20px 12px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .trip-brand {
+    font-size: 21px;
+  }
+  .trip-navigation nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 3px;
+  }
+  .trip-navigation nav a {
+    padding: 8px 9px;
+    font-size: 11px;
+  }
+  .trip-global-footer {
+    margin-top: 25px;
+    padding: 20px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  body[data-trip-page="travel"] .app-header {
+    padding: 24px 20px;
+  }
+  body[data-trip-page="play"] .trip-navigation {
+    height: auto;
+    padding: 12px 16px;
+  }
+  body[data-trip-page="play"] .trip-navigation .trip-brand {
+    display: none;
+  }
+  body[data-trip-page="play"] .race-tools {
+    top: 64px;
+  }
+  body[data-trip-page="play"] .screen {
+    height: calc(100dvh - 56px);
+  }
+}
+
+body[data-trip-page="travel"] {
+  --primary: #244b3b;
+  --primary-light: #bbcfb5;
+  --primary-dark: #244b3b;
+  --primary-subtle: #e5ecdd;
+  --secondary: #d5ddc5;
+  --text-muted: #758271;
+  --text-soft: #647263;
+  --card-bg: #fffef8;
+  --card-bg-soft: #f5f7ed;
+  --bg-soft: #f8f9ef;
+  --border-strong: #c6d3bf;
+}
+body[data-trip-page="travel"] > header:not(.trip-navigation) {
+  position: relative;
+  background: none;
+  border: 0;
+  backdrop-filter: none;
+  margin: 20px auto 16px;
+}
+body[data-trip-page="travel"] .header-inner,
+body[data-trip-page="travel"] main {
+  max-width: 1216px;
+}
+.header-emoji,
+.header-sub .heart {
+  display: none;
+}
+body[data-trip-page="travel"] .header-inner {
+  padding: 0 24px;
+  min-height: 85px;
+}
+body[data-trip-page="travel"] main {
+  padding: 0 24px 24px;
+}
+.pack-row.done label {
+  text-decoration: line-through;
+  color: #a1a99b;
+}
+
+body[data-trip-page="travel"] {
+  --secondary-subtle: #e8efdf;
+}
+body[data-trip-page="travel"] > footer:not(.trip-global-footer) {
+  display: none;
+}
+
+.trip-navigation {
+  border: 0;
+}
+.trip-dialog {
+  max-height: 90dvh;
+  overflow: auto;
+}
+.hero-copy {
+  min-width: 0;
+}
+.hero-copy h1,
+.hero-copy p {
+  overflow-wrap: anywhere;
+}
+.destination-label {
+  max-width: calc(100% - 48px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.crew-person > div {
+  min-width: 0;
+}
+.crew-person strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.expense-row > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.pc-name {
+  max-width: 140px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@media (max-width: 640px) {
+  .pc-name {
+    max-width: 85px;
+  }
+  .tb-left {
+    font-size: 10px;
+  }
+  .trip-dialog {
+    padding: 23px;
+  }
+}
+
+body[data-trip-page="play"] .cc-name,
+body[data-trip-page="play"] .sp-name,
+body[data-trip-page="play"] .gu-driver-name {
+  overflow-wrap: anywhere;
+}

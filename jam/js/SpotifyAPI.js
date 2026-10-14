@@ -1,5 +1,5 @@
 // Spotify Web API wrapper — only the endpoints we need for collaborative Jams.
-import { getAccessToken, refresh } from './SpotifyAuth.js?v=20261014';
+import { getAccessToken, refresh } from './SpotifyAuth.js?v=20261014d';
 
 const BASE = 'https://api.spotify.com/v1';
 

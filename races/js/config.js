@@ -1,5 +1,5 @@
 // ─── Characters ──────────────────────────────────────────────────────────────
-export const CHARACTERS = [
+const DEFAULT_CHARACTERS = [
   { id:'mj',      name:'MJ',           from:'Stoke',      car:'MUSCLE', hex:'#FF2D2D', color:0xFF2D2D, quote:'"Let\'s gooo!"',         stats:{speed:8,drift:5,accel:7,handling:6} },
   { id:'ringan',  name:'Ringan',       from:'Coventry',   car:'SPORTS', hex:'#2D8BFF', color:0x2D8BFF, quote:'"Precise as always."',    stats:{speed:7,drift:7,accel:8,handling:9} },
   { id:'shad',    name:'Shad',         from:'Manchester', car:'DRIFT',  hex:'#B040FF', color:0xB040FF, quote:'"Sideways is the only way."', stats:{speed:6,drift:10,accel:6,handling:7} },
@@ -13,6 +13,14 @@ export const CHARACTERS = [
   { id:'ishant',  name:'Ishant',       from:'Liverpool',  car:'DRIFT',  hex:'#F1C40F', color:0xF1C40F, quote:'"Watch the master."',     stats:{speed:6,drift:9,accel:7,handling:8} },
   { id:'leila',   name:'Leila (maybe)',from:'Cardiff',    car:'SPORTS', hex:'#8E44AD', color:0x8E44AD, quote:'"Maybe I\'ll win. Maybe."',stats:{speed:7,drift:7,accel:7,handling:8} },
 ];
+
+// Trip friends are the drivers; existing named drivers retain their saved garage IDs.
+export const CHARACTERS = (() => {
+  if (typeof window === 'undefined' || !window.TripPlan) return DEFAULT_CHARACTERS;
+  const people=Object.values(window.TripPlan.transport().people),used=new Set();
+  if(!people.length)return [{...DEFAULT_CHARACTERS[0],id:'guest',name:'Guest',from:'The trip'}];
+  return people.map((person,i)=>{const match=DEFAULT_CHARACTERS.find(c=>c.name.toLowerCase()===person.name.toLowerCase());const template=match||DEFAULT_CHARACTERS[i%DEFAULT_CHARACTERS.length];const identifier=match&&!used.has(match.id)?match.id:'trip_'+person.id;used.add(identifier);return {...template,id:identifier,name:person.name,from:person.from||'The crew',quote:match?.quote||'"Good company. Friendly competition."'};});
+})();
 
 // ─── Car type display info ────────────────────────────────────────────────────
 export const CAR_TYPES = {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { TRACK } from './config.js?v=20261014b';
+import { TRACK } from './config.js?v=20261014d';
 
 export function buildTrack(scene) {
   const { innerR, outerR, centerR } = TRACK;

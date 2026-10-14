@@ -1,5 +1,5 @@
-import {ROUTE,ROAD_WIDTH} from './Route.js?v=20261014b';
-import { TRACK } from './config.js?v=20261014b';
+import {ROUTE,ROAD_WIDTH} from './Route.js?v=20261014d';
+import { TRACK } from './config.js?v=20261014d';
 
 export class HUD {
   constructor() {

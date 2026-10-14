@@ -6,14 +6,14 @@ import {
   ROUTE,
   ROAD_WIDTH,
   SAMPLE_COUNT,
-} from "./Route.js?v=20261014b";
+} from "./Route.js?v=20261014d";
 const loader = new THREE.TextureLoader();
 // Pine texture is an atlas: use only the isolated needle cluster in its upper left.
 function pineCard() {
   const geometry = new THREE.PlaneGeometry(1, 1);
   const uv = geometry.attributes.uv;
   for (let i = 0; i < uv.count; i++)
-    uv.setXY(i, uv.getX(i) * 0.24, 0.55 + uv.getY(i) * 0.45);
+    uv.setXY(i, 0.035 + uv.getX(i) * 0.18, 0.57 + uv.getY(i) * 0.38);
   return geometry;
 }
 function ridgeGeometry(height, seed) {

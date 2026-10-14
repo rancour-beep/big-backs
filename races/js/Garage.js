@@ -1,6 +1,8 @@
+
+const safeText=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 import * as THREE from 'three';
-import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014b';
-import { CAR_CONFIGS, CAR_TYPES, CHARACTERS }  from './config.js?v=20261014b';
+import { buildCarMesh, applyCarCustomization } from './CarMesh.js?v=20261014d';
+import { CAR_CONFIGS, CAR_TYPES, CHARACTERS }  from './config.js?v=20261014d';
 
 const GARAGE_KEY = 'bigbacks_garage_v1';
 
@@ -187,8 +189,8 @@ export class Garage {
 
     panel.innerHTML = `
       <div class="gu-header">
-        <div class="gu-driver-name">${char.name}</div>
-        <div class="gu-from">📍 ${char.from}</div>
+        <div class="gu-driver-name">${safeText(char.name)}</div>
+        <div class="gu-from">📍 ${safeText(char.from)}</div>
       </div>
 
       <section class="gu-section">

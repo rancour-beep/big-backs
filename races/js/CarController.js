@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {projectRoute,ROAD_WIDTH} from './Route.js?v=20261014b';
-import { TRACK } from './config.js?v=20261014b';
+import {projectRoute,ROAD_WIDTH} from './Route.js?v=20261014d';
+import { TRACK } from './config.js?v=20261014d';
 
 export class CarController {
   constructor(carCfg, startPos, startAngle) {
